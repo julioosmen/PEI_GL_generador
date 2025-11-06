@@ -272,7 +272,10 @@ def seccion_anexo_b2(aei_seleccionadas, ruta_excel):
                 "Indicador_Servicio_PN",
                 "Código AEI", "Denominación AEI", "Nombre del indicador AEI"
             ]]
-
+          
+            # 🔹 Quitar índice numérico de pandas
+            df_final.reset_index(drop=True, inplace=True)
+            
             st.markdown("### 🧾 Anexo B-2")
             st.dataframe(df_final, use_container_width=True)
             return df_final
