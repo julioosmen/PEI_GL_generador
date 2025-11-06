@@ -242,7 +242,9 @@ def seccion_anexo_b2(aei_seleccionadas, ruta_excel):
 
             # Mostrar las opciones disponibles
             opciones = [
-                f"{row['Nombre de la Política Nacional']} | {row['Código_OP_PN']} | {row['Código_Lin_PN']} | {row['Código_Servicio_PN']}"
+ #              f"{row['Nombre de la Política Nacional']} | {row['Código_OP_PN']} | {row['Código_Lin_PN']} | {row['Código_Servicio_PN']}"
+                f"{row['Nombre de la Política Nacional']} | {row['Enunciado_Servicio_PN']}"
+
                 for _, row in subset.iterrows()
             ]
 
