@@ -156,8 +156,8 @@ def seccion_ruta_estrategica(oei_seleccionados, aei_seleccionadas, ruta_excel_vi
 
         # Aseguramos las columnas esperadas
         columnas_esperadas = [
-            "Cod_OEI", "Denominación OEI", "Vinculación OEI con la PGG",
-            "Cod AEI", "Denominación AEI", "Vinculación AEI con la PGG"
+            "Código OEI", "Denominación OEI", "Vinculación OEI con la PGG",
+            "Código AEI", "Denominación AEI", "Vinculación AEI con la PGG"
         ]
         if not all(col in df_vinc.columns for col in columnas_esperadas):
             st.error("❌ El archivo de vinculación no tiene las columnas esperadas.")
@@ -165,11 +165,11 @@ def seccion_ruta_estrategica(oei_seleccionados, aei_seleccionadas, ruta_excel_vi
 
         # 🔹 Filtrar por OEI y AEI seleccionados
         cod_oei_sel = oei_seleccionados["Código"].unique().tolist()
-        cod_aei_sel = aei_seleccionadas["Código"].unique().tolist()
+        cod_aei_sel = aei_seleccionadas["Código AEI"].unique().tolist()
 
         df_filtrado = df_vinc[
-            df_vinc["Cod_OEI"].isin(cod_oei_sel) |
-            df_vinc["Cod AEI"].isin(cod_aei_sel)
+            df_vinc["Código OEI"].isin(cod_oei_sel) |
+            df_vinc["Código AEI"].isin(cod_aei_sel)
         ].copy()
 
         # 🔹 Si no hay coincidencias
@@ -193,3 +193,88 @@ def seccion_anexos():
     b2 = st.text_area("Anexo B-2", height=100, key='b2')
     b3 = st.text_area("Anexo B-3", height=100, key='b3')
     return {'B-1': b1, 'B-2': b2, 'B-3': b3}
+
+def seccion_anexo_b2(aei_seleccionadas, ruta_excel):
+
+    st.markdown("### 🧭 Anexo B-2: Vinculación de AEI con Políticas Nacionales")
+    st.markdown(
+        "Selecciona la **vinculación con la Política Nacional** correspondiente para cada AEI. "
+        "En algunos casos, una misma AEI puede estar asociada a más de una política; elige la más adecuada."
+    )
+
+    try:
+        # Leer el archivo Excel de vinculaciones
+        df_pn = pd.read_excel(ruta_excel)
+
+        # Normalizar nombres de columnas
+        df_pn = df_pn.rename(columns={
+            "Código AEI": "Código AEI",
+            "Denominación AEI": "Denominación AEI",
+            "Nombre del indicador": "Nombre del indicador",
+            "Nombre de la Política Nacional": "Nombre de la Política Nacional",
+            "Código_OP_PN": "Código_OP_PN",
+            "Enunciado_OP_PN": "Enunciado_OP_PN",
+            "Código_Lin_PN": "Código_Lin_PN",
+            "Enunciado_Lin_PN": "Enunciado_Lin_PN",
+            "Código_Servicio_PN": "Código_Servicio_PN",
+            "Enunciado_Servicio_PN": "Enunciado_Servicio_PN",
+            "Indicador_Servicio_PN": "Indicador_Servicio_PN"
+        })
+
+        # Filtrar solo AEI seleccionadas
+        aei_codigos = aei_df["Código AEI"].tolist() if "Código AEI" in aei_df.columns else []
+        df_filtrado = df_pn[df_pn["Código AEI"].isin(aei_codigos)]
+
+        resultados = []
+
+        # Para cada AEI seleccionada, mostrar las opciones de vinculación
+        for codigo_aei in aei_codigos:
+            subset = df_filtrado[df_filtrado["Código AEI"] == codigo_aei]
+
+            if subset.empty:
+                st.warning(f"No hay vínculos registrados para {codigo_aei}")
+                continue
+
+            denominacion = subset["Denominación AEI"].iloc[0]
+            indicador = subset["Nombre del indicador"].iloc[0]
+
+            st.markdown(f"#### 🔹 {codigo_aei} — {denominacion}")
+
+            # Mostrar las opciones disponibles
+            opciones = [
+                f"{row['Nombre de la Política Nacional']} | {row['Código_OP_PN']} | {row['Código_Lin_PN']} | {row['Código_Servicio_PN']}"
+                for _, row in subset.iterrows()
+            ]
+
+            seleccion = st.selectbox(
+                f"Selecciona la vinculación para {codigo_aei}",
+                opciones,
+                key=f"sel_{codigo_aei}"
+            )
+
+            # Recuperar la fila seleccionada
+            fila = subset.iloc[opciones.index(seleccion)]
+            resultados.append(fila)
+
+        # Construir tabla resumen
+        if resultados:
+            df_final = pd.DataFrame(resultados)[[
+                "Nombre de la Política Nacional",
+                "Código_OP_PN", "Enunciado_OP_PN",
+                "Código_Lin_PN", "Enunciado_Lin_PN",
+                "Código_Servicio_PN", "Enunciado_Servicio_PN",
+                "Indicador_Servicio_PN",
+                "Código AEI", "Denominación AEI", "Nombre del indicador"
+            ]]
+
+            st.markdown("### 🧾 Resumen final del Anexo B-2")
+            st.dataframe(df_final, use_container_width=True)
+            return df_final
+        else:
+            st.info("Selecciona al menos una vinculación para continuar.")
+            return pd.DataFrame()
+
+    except Exception as e:
+        st.error(f"❌ Error al cargar o procesar el Anexo B-2: {e}")
+        return pd.DataFrame()
+
