@@ -58,6 +58,6 @@ anexos = seccion_anexos()
 
 if st.button("📝 Generar documento Word"):
     with st.spinner("Generando PEI..."):
-        archivo_bytes = generar_pei_word(nombre, tipo, mision, oei_df, aei_df, ruta, anexos)
+        archivo_bytes = generar_pei_word(nombre, tipo, mision, oei_seleccionados, aei_seleccionadas, ruta, anexos)
         st.success("✅ PEI generado correctamente.")
         st.download_button("Descargar PEI", data=archivo_bytes, file_name=f"PEI_{nombre}.docx", mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
