@@ -222,7 +222,7 @@ def seccion_anexo_b2(aei_seleccionadas, ruta_excel):
         })
 
         # Filtrar solo AEI seleccionadas
-        aei_codigos = aei_df["Código AEI"].tolist() if "Código AEI" in aei_df.columns else []
+        aei_codigos = aei_seleccionadas["Código AEI"].tolist() if "Código AEI" in aei_seleccionadas.columns else []
         df_filtrado = df_pn[df_pn["Código AEI"].isin(aei_codigos)]
 
         resultados = []
