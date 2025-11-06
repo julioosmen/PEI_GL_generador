@@ -43,10 +43,12 @@ st.header("1️⃣ Misión")
 mision = seccion_mision()
 
 st.header("2️⃣ Objetivos Estratégicos Institucionales (OEI)")
-oei_df = seccion_oei()
+#oei_df = seccion_oei()
+oei_seleccionados = seccion_oei()
 
 st.header("3️⃣ Acciones Estratégicas Institucionales (AEI)")
-aei_df = seccion_aei(oei_df)
+#aei_df = seccion_aei(oei_df)
+aei_seleccionadas = seccion_aei(oei_seleccionados)
 
 st.header("4️⃣ Ruta Estratégica")
 ruta = seccion_ruta_estrategica()
@@ -56,6 +58,6 @@ anexos = seccion_anexos()
 
 if st.button("📝 Generar documento Word"):
     with st.spinner("Generando PEI..."):
-        archivo_bytes = generar_pei_word(nombre, tipo, mision, oei_df, aei_df, ruta, anexos)
+        archivo_bytes = generar_pei_word(nombre, tipo, mision, oei_seleccionados, aei_seleccionadas, ruta, anexos)
         st.success("✅ PEI generado correctamente.")
         st.download_button("Descargar PEI", data=archivo_bytes, file_name=f"PEI_{nombre}.docx", mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
