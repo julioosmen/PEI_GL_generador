@@ -57,7 +57,7 @@ def seccion_oei():
     st.markdown("### 🎯 Objetivos Estratégicos Institucionales (OEI)")
 
     # Dataset base con 11 OEI (ejemplo)
-    oei_data = pd.DataFrame({
+    oei_data = pd.DataFrame([
         #"Código": [f"OEI{i:02d}" for i in range(1, 12)],
         #"Denominación": [
         {"Código": "OEI.01", "Denominación": "Promover el ordenamiento territorial en beneficio de población local", "Nombre del Indicador": "Porcentaje de la población local que reside en zonas que cumplen con los instrumentos técnicos sustentatorios para el ordenamiento territorial"},
@@ -72,7 +72,7 @@ def seccion_oei():
         {"Código": "OEI.09", "Denominación": "Impulsar el crecimiento de la actividad empresarial, de emprendimientos y MYPES en la localidad", "Nombre del Indicador": "Porcentaje de micro y pequeñas empresas que operan con licencias municipales adecuadas"},
         {"Código": "OEI.10", "Denominación": "Mejorar el sistema de transporte y transitabilidad en beneficio de la población local", "Nombre del Indicador": "Porcentaje de puntos críticos de tránsito en vías locales atendidos y mitigados"},
         {"Código": "OEI.11", "Denominación": "Modernizar la Gestión Institucional", "Nombre del Indicador": "Porcentaje de ciudadanos satisfechos con la gestión institucional de la municipalidad"}
-        })
+        ])
 
     seleccionados = st.multiselect(
         "Selecciona uno o más OEI:",
