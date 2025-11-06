@@ -140,7 +140,7 @@ def seccion_aei(oei_seleccionados):
 #    return ruta
 def seccion_ruta_estrategica(oei_seleccionados, aei_seleccionadas, ruta_excel_vinculacion):
 
-    st.header("3️⃣ Ruta Estratégica: Vinculación con la PGG")
+    #st.header("3️⃣ Ruta Estratégica: Vinculación con la PGG")
 
     if oei_seleccionados.empty:
         st.warning("⚠️ Primero selecciona los Objetivos Estratégicos Institucionales (OEI).")
