@@ -46,7 +46,7 @@ st.header("2️⃣ Objetivos Estratégicos Institucionales (OEI)")
 oei_df = seccion_oei()
 
 st.header("3️⃣ Acciones Estratégicas Institucionales (AEI)")
-aei_df = seccion_aei()
+aei_df = seccion_aei(oei_df)
 
 st.header("4️⃣ Ruta Estratégica")
 ruta = seccion_ruta_estrategica()
