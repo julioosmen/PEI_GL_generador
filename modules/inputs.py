@@ -204,6 +204,7 @@ def seccion_anexo_b2(aei_seleccionadas, ruta_excel):
         Se despliega el **nombre de la Política Nacional** y la **denominación del servicio** vinculado.
         """
     )
+    
     try:
         # Leer el archivo Excel de vinculaciones
         df_pn = pd.read_excel(ruta_excel)
