@@ -169,7 +169,7 @@ def seccion_ruta_estrategica(oei_seleccionados, aei_seleccionadas, ruta_excel_vi
         cod_aei_sel = aei_seleccionadas["Código AEI"].unique().tolist()
 
         df_filtrado = df_vinc[
-            df_vinc["Código OEI"].isin(cod_oei_sel) |
+            df_vinc["Código OEI"].isin(cod_oei_sel) &
             df_vinc["Código AEI"].isin(cod_aei_sel)
         ].copy()
 
