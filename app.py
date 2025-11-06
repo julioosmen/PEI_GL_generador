@@ -4,7 +4,7 @@ from modules.inputs import seccion_mision, seccion_oei, seccion_aei, seccion_rut
 from modules.word_generator import generar_pei_word
 
 st.set_page_config(page_title="Generador PEI Municipal", layout="wide")
-st.title("📘 Generador de Plan Estratégico Institucional (PEI)")
+st.title("📘 Generador del Plan Estratégico Institucional (PEI)")
 st.write("Aplicación para municipalidades provinciales y distritales del Perú.")
 
 # =====================================
