@@ -9,7 +9,7 @@ def seccion_mision():
     """
     Despliega la sección de Misión con guía y ejemplos predefinidos.
     """
-    st.markdown("### 🧭 Misión Institucional")
+#   st.markdown("### 🧭 Misión Institucional")
     st.info("**Estructura de redacción:** Rol central de la entidad + Población beneficiaria + Atributos.")
 
     ejemplos = [
