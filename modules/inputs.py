@@ -164,7 +164,7 @@ def seccion_ruta_estrategica(oei_seleccionados, aei_seleccionadas, ruta_excel_vi
             return pd.DataFrame()
 
         # 🔹 Filtrar por OEI y AEI seleccionados
-        cod_oei_sel = oei_seleccionados["Código OEI"].unique().tolist()
+        cod_oei_sel = oei_seleccionados["Código"].unique().tolist()
         cod_aei_sel = aei_seleccionadas["Código AEI"].unique().tolist()
 
         df_filtrado = df_vinc[
