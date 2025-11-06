@@ -72,6 +72,15 @@ anexo_b2_df = seccion_anexo_b2(aei_seleccionadas, RUTA_ANEXO_B2)
 
 if st.button("📝 Generar documento Word"):
     with st.spinner("Generando PEI..."):
-        archivo_bytes = generar_pei_word(nombre, tipo, mision, oei_seleccionados, aei_seleccionadas, ruta, anexos)
+        #archivo_bytes = generar_pei_word(nombre, tipo, mision, oei_seleccionados, aei_seleccionadas, ruta, anexos)
+        word_bytes = generar_pei_word(
+            nombre_muni=nombre_muni,
+            tipo=tipo_muni,
+            mision=mision,
+            oei_df=oei_seleccionados,
+            aei_df=aei_seleccionadas,
+            ruta_df=ruta_estrategica_df,
+            anexo_b2_df=anexo_b2_df,
+        )
         st.success("✅ PEI generado correctamente.")
-        st.download_button("Descargar PEI", data=archivo_bytes, file_name=f"PEI_{nombre}.docx", mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+        st.download_button("Descargar PEI", data=word_bytes, file_name=f"PEI_{nombre}.docx", mime='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
