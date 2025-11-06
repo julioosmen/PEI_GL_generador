@@ -76,7 +76,8 @@ def seccion_oei():
 
     seleccionados = st.multiselect(
         "Selecciona uno o más OEI:",
-        options=oei_data.apply(lambda r: f"{r['Código']} - {r['Denominación']}", axis=1).tolist()
+#       options=oei_data.apply(lambda r: f"{r['Código']} - {r['Denominación']}", axis=1).tolist()
+        options=oei_data.apply(lambda r: f"{r['Código']} - {r['Denominación']} - {r['Nombre del Indicador']}", axis=1).tolist()
     )
 
     if seleccionados:
