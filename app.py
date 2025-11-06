@@ -7,15 +7,38 @@ st.set_page_config(page_title="Generador PEI Municipal", layout="wide")
 st.title("📘 Generador de Plan Estratégico Institucional (PEI)")
 st.write("Aplicación para municipalidades provinciales y distritales del Perú.")
 
-# Información inicial
-tipo = st.selectbox("Tipo de municipalidad", ["Provincial", "Distrital"])
-nombre = st.text_input("Nombre de la municipalidad", value="Nombre Municipalidad")
+# =====================================
+# 🏛️ Información inicial desde pliegos.xlsx
+# =====================================
+@st.cache_data
+def cargar_pliegos():
+    return pd.read_excel("data/pliegos.xlsx", engine="openpyxl")
 
-st.markdown("""---
-## Completa las secciones del PEI
-""")
+df_pliegos = cargar_pliegos()
 
-# Secciones
+st.subheader("🏛️ Información de la Municipalidad")
+
+codigos = df_pliegos["Codigo_Pliego"].astype(str).tolist()
+codigo_ingresado = st.selectbox("Selecciona o escribe el código del pliego", codigos)
+
+datos = df_pliegos[df_pliegos["Codigo_Pliego"].astype(str) == codigo_ingresado].iloc[0]
+
+st.write(f"**Nombre:** {datos['Nombre_Municipalidad']}")
+st.write(f"**Tipo:** {datos['Tipo']}")
+st.write(f"**Departamento:** {datos['Departamento']}")
+st.write(f"**Provincia:** {datos['Provincia']}")
+if pd.notna(datos.get("Distrito")):
+    st.write(f"**Distrito:** {datos['Distrito']}")
+
+tipo = datos["Tipo"]
+nombre = datos["Nombre_Municipalidad"]
+
+st.markdown("---")
+st.markdown("## Completa las secciones del PEI")
+
+# =====================================
+# Secciones del PEI
+# =====================================
 st.header("1️⃣ Misión")
 mision = seccion_mision()
 
