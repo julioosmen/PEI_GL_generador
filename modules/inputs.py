@@ -50,59 +50,90 @@ def _editar_tabla_interna(default_columns, default_rows=3, key=None):
             df = pd.DataFrame()
     return df
 
+# =====================================================
+# 🎯 OEI (Objetivos Estratégicos Institucionales)
+# =====================================================
 def seccion_oei():
-    st.info("Agrega tus Objetivos Estratégicos Institucionales. Cada fila corresponde a un OEI.")
-    uploaded = st.file_uploader("Subir tabla OEI (Excel o CSV)", type=['xlsx','csv'], accept_multiple_files=False, key='u_oei')
-    if uploaded is not None:
-        try:
-            if uploaded.name.lower().endswith('.csv'):
-                df = pd.read_csv(uploaded)
-            else:
-                df = pd.read_excel(uploaded, engine='openpyxl')
-        except Exception as e:
-            st.error(f"Error al leer el archivo: {e}")
-            df = pd.DataFrame(columns=["Código","Denominación","Observaciones"])
-    else:
-        # crear tabla manual
-        st.write("Crear OEI manualmente (ejemplo simple)")
-        cols = st.columns([1,4,2])
-        codigo = cols[0].text_input("Código ejemplo", key='oei_codigo')
-        denominacion = cols[1].text_input("Denominación ejemplo", key='oei_deno')
-        observ = cols[2].text_input("Observaciones", key='oei_obs')
-        if st.button("Agregar OEI", key='add_oei'):
-            if 'oei_df' not in st.session_state:
-                st.session_state['oei_df'] = []
-            st.session_state['oei_df'].append({'Código': codigo, 'Denominación': denominacion, 'Observaciones': observ})
-        df = pd.DataFrame(st.session_state.get('oei_df', []))
-    st.dataframe(df)
-    return df
+    st.markdown("### 🎯 Objetivos Estratégicos Institucionales (OEI)")
 
-def seccion_aei():
-    st.info("Agrega tus Acciones Estratégicas Institucionales. Cada fila corresponde a una AEI.")
-    uploaded = st.file_uploader("Subir tabla AEI (Excel o CSV)", type=['xlsx','csv'], accept_multiple_files=False, key='u_aei')
-    if uploaded is not None:
-        try:
-            if uploaded.name.lower().endswith('.csv'):
-                df = pd.read_csv(uploaded)
-            else:
-                df = pd.read_excel(uploaded, engine='openpyxl')
-        except Exception as e:
-            st.error(f"Error al leer el archivo: {e}")
-            df = pd.DataFrame(columns=["Código","Acción","Indicador","Responsable"])
+    # Dataset base con 11 OEI (ejemplo)
+    oei_data = pd.DataFrame({
+        #"Código": [f"OEI{i:02d}" for i in range(1, 12)],
+        #"Denominación": [
+        {"Código": "OEI.01", "Denominación": "Promover el ordenamiento territorial en beneficio de población local", "Nombre del Indicador": "Porcentaje de la población local que reside en zonas que cumplen con los instrumentos técnicos sustentatorios para el ordenamiento territorial"},
+        {"Código": "OEI.02", "Denominación": "Fortalecer el acceso a la atención primaria de salud preventiva de la población local", "Nombre del Indicador": "Porcentaje de personas satisfechas con las campañas y actividades de promoción de salud realizadas por la municipalidad"},
+        {"Código": "OEI.03", "Denominación": "Promover el acceso a servicios educativos, deportivos y recreacionales con enfoque intercultural e inclusivo para la población local", "Nombre del Indicador": "Porcentaje de participantes satisfechos con los programas educativos organizados por la municipalidad"},
+        {"Código": "OEI.04", "Denominación": "Promover condiciones ambientales saludables y sostenibles para la población local", "Nombre del Indicador": "Porcentaje de ciudadanos satisfechos con el servicio de recojo de residuos sólidos"},
+        {"Código": "OEI.04", "Denominación": "Promover condiciones ambientales saludables y sostenibles para la población local", "Nombre del Indicador": "Porcentaje de zonas de la localidad donde se han reducido puntos críticos de contaminación"},
+        {"Código": "OEI.05", "Denominación": "Reducir la exposición al riesgo de desastres de origen natural o antrópico de la población local", "Nombre del Indicador": "Porcentaje de zonas de la localidad con factores de riesgo de desastres eliminados o minimizados"},
+        {"Código": "OEI.06", "Denominación": "Mejorar el acceso a servicios de protección social y defensa de derechos de la población en situación de vulnerabilidad de la localidad", "Nombre del Indicador": "Porcentaje de la población en situación de vulnerabilidad atendida por programas sociales municipales"},
+        {"Código": "OEI.07", "Denominación": "Fortalecer la prevención y disuasión del delito y violencia en beneficio de la población local", "Nombre del Indicador": "Porcentaje de zonas con alta incidencia delictiva con servicio de patrullaje integrado"},
+        {"Código": "OEI.08", "Denominación": "Garantizar la provisión de los servicios de agua potable y saneamiento en beneficio de la población local", "Nombre del Indicador": "Porcentaje de viviendas con servicio de agua potable y alcantarillado"},
+        {"Código": "OEI.09", "Denominación": "Impulsar el crecimiento de la actividad empresarial, de emprendimientos y MYPES en la localidad", "Nombre del Indicador": "Porcentaje de micro y pequeñas empresas que operan con licencias municipales adecuadas"},
+        {"Código": "OEI.10", "Denominación": "Mejorar el sistema de transporte y transitabilidad en beneficio de la población local", "Nombre del Indicador": "Porcentaje de puntos críticos de tránsito en vías locales atendidos y mitigados"},
+        {"Código": "OEI.11", "Denominación": "Modernizar la Gestión Institucional", "Nombre del Indicador": "Porcentaje de ciudadanos satisfechos con la gestión institucional de la municipalidad"}
+        })
+
+    seleccionados = st.multiselect(
+        "Selecciona uno o más OEI:",
+        options=oei_data.apply(lambda r: f"{r['Código']} - {r['Denominación']}", axis=1).tolist()
+    )
+
+    if seleccionados:
+        # extraer códigos seleccionados
+        codigos = [s.split(' - ')[0] for s in seleccionados]
+        df_sel = oei_data[oei_data["Código"].isin(codigos)][["Código","Denominación","Nombre del Indicador"]]
+        st.dataframe(df_sel.reset_index(drop=True), hide_index=True, use_container_width=True)
+        return df_sel
     else:
-        st.write("Crear AEI manualmente (ejemplo simple)")
-        cols = st.columns([1,4,2,2])
-        codigo = cols[0].text_input("Código ejemplo AEI", key='aei_codigo')
-        accion = cols[1].text_input("Acción", key='aei_accion')
-        indicador = cols[2].text_input("Indicador", key='aei_ind')
-        responsable = cols[3].text_input("Responsable", key='aei_resp')
-        if st.button("Agregar AEI", key='add_aei'):
-            if 'aei_df' not in st.session_state:
-                st.session_state['aei_df'] = []
-            st.session_state['aei_df'].append({'Código': codigo, 'Acción': accion, 'Indicador': indicador, 'Responsable': responsable})
-        df = pd.DataFrame(st.session_state.get('aei_df', []))
-    st.dataframe(df)
-    return df
+        st.warning("Selecciona al menos un OEI para continuar.")
+        return pd.DataFrame(columns=["Código","Denominación","Nombre del Indicador"])
+
+
+# =====================================================
+# 🧩 AEI (Acciones Estratégicas Institucionales)
+# =====================================================
+@st.cache_data
+def cargar_aei_excel(path='data/aei.xlsx'):
+    try:
+        return pd.read_excel(path, engine='openpyxl')
+    except Exception as e:
+        st.error(f"No se pudo cargar data/aei.xlsx: {e}")
+        return pd.DataFrame(columns=["Código OEI","Código AEI","Denominación","Nombre del Indicador"])
+
+def seccion_aei(oei_seleccionados):
+    st.markdown("### 🧩 Acciones Estratégicas Institucionales (AEI)")
+
+    if oei_seleccionados is None or oei_seleccionados.empty:
+        st.info("Primero selecciona al menos un OEI para ver las AEI disponibles.")
+        return pd.DataFrame(columns=["Código OEI","Código AEI","Denominación","Nombre del Indicador"])
+
+    aei_base = cargar_aei_excel()
+
+    # Filtrar AEI por los códigos OEI seleccionados
+    codigos_oei = oei_seleccionados["Código"].astype(str).tolist()
+    aei_filtrado = aei_base[aei_base["Código OEI"].isin(codigos_oei)][["Código OEI","Código AEI","Denominación","Nombre del Indicador"]]
+
+    if aei_filtrado.empty:
+        st.warning("No se encontraron AEI para los OEI seleccionados en data/aei.xlsx.")
+        return pd.DataFrame(columns=["Código OEI","Código AEI","Denominación","Nombre del Indicador"])
+
+    # Para cada OEI mostrar las AEI disponibles y permitir seleccionar
+    seleccionadas_list = []
+    for codigo in codigos_oei:
+        subset = aei_filtrado[aei_filtrado["Código OEI"] == codigo]
+        opciones = subset.apply(lambda r: f"{r['Código AEI']} - {r['Denominación']}", axis=1).tolist()
+        seleccion = st.multiselect(f"Selecciona AEI para {codigo}", options=opciones, key=f"aei_{codigo}")
+        seleccionadas_list.extend(seleccion)
+
+    if seleccionadas_list:
+        codigos_aei_sel = [s.split(' - ')[0] for s in seleccionadas_list]
+        df_sel = aei_filtrado[aei_filtrado["Código AEI"].isin(codigos_aei_sel)][["Código OEI","Código AEI","Denominación","Nombre del Indicador"]]
+        st.dataframe(df_sel.reset_index(drop=True), hide_index=True, use_container_width=True)
+        return df_sel
+    else:
+        st.warning("Selecciona al menos una AEI para continuar.")
+        return pd.DataFrame(columns=["Código OEI","Código AEI","Denominación","Nombre del Indicador"])
 
 def seccion_ruta_estrategica():
     ruta = st.text_area("Ruta Estratégica (breve descripción)", height=120, placeholder="Describe la ruta estratégica...")
