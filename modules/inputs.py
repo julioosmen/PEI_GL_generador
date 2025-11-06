@@ -236,7 +236,7 @@ def seccion_anexo_b2(aei_seleccionadas, ruta_excel):
                 continue
 
             denominacion = subset["Denominación AEI"].iloc[0]
-            indicador = subset["Nombre del indicador"].iloc[0]
+            indicador = subset["Nombre del indicador AEI"].iloc[0]
 
             st.markdown(f"#### 🔹 {codigo_aei} — {denominacion}")
 
