@@ -273,7 +273,7 @@ def seccion_anexo_b2(aei_seleccionadas, ruta_excel):
                 "Código AEI", "Denominación AEI", "Nombre del indicador AEI"
             ]]
 
-            st.markdown("### 🧾 Resumen final del Anexo B-2")
+            st.markdown("### 🧾 Anexo B-2")
             st.dataframe(df_final, use_container_width=True)
             return df_final
         else:
