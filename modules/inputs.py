@@ -277,7 +277,8 @@ def seccion_anexo_b2(aei_seleccionadas, ruta_excel):
             df_final.reset_index(drop=True, inplace=True)
             
             st.markdown("### 🧾 Anexo B-2")
-            st.dataframe(df_final, use_container_width=True)
+            #st.dataframe(df_final, use_container_width=True)
+            st.dataframe(df_final, use_container_width=True, hide_index=True)
             return df_final
         else:
             st.info("Selecciona al menos una vinculación para continuar.")
