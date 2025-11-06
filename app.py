@@ -62,7 +62,7 @@ ruta_estrategica_df = seccion_ruta_estrategica(
     RUTA_VINCULACION_PGG
 )
 
-st.header("5️⃣ Anexos B-1, B-2 y B-3")
+st.header(" Anexos B-1, B-2 y B-3")
 anexos = seccion_anexos()
 
 st.header(" Anexo B-2: Vinculación con Políticas Nacionales")
