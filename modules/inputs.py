@@ -54,7 +54,7 @@ def _editar_tabla_interna(default_columns, default_rows=3, key=None):
 # 🎯 OEI (Objetivos Estratégicos Institucionales)
 # =====================================================
 def seccion_oei():
-    st.markdown("### 🎯 Objetivos Estratégicos Institucionales (OEI)")
+    #st.markdown("### 🎯 Objetivos Estratégicos Institucionales (OEI)")
 
     # Dataset base con 11 OEI (ejemplo)
     oei_data = pd.DataFrame([
@@ -103,7 +103,7 @@ def cargar_aei_excel(path='data/aei.xlsx'):
         return pd.DataFrame(columns=["Código OEI","Código AEI","Denominación","Nombre del Indicador"])
 
 def seccion_aei(oei_seleccionados):
-    st.markdown("### 🧩 Acciones Estratégicas Institucionales (AEI)")
+    #st.markdown("### 🧩 Acciones Estratégicas Institucionales (AEI)")
 
     if oei_seleccionados is None or oei_seleccionados.empty:
         st.info("Primero selecciona al menos un OEI para ver las AEI disponibles.")
