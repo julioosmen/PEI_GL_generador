@@ -76,7 +76,8 @@ def seccion_oei():
 
     seleccionados = st.multiselect(
         "Selecciona uno o más OEI:",
-        options=oei_data.apply(lambda r: f"{r['Código']} - {r['Denominación']}", axis=1).tolist()
+#       options=oei_data.apply(lambda r: f"{r['Código']} - {r['Denominación']}", axis=1).tolist()
+        options=oei_data.apply(lambda r: f"{r['Código']} - {r['Denominación']} - {r['Nombre del Indicador']}", axis=1).tolist()
     )
 
     if seleccionados:
@@ -196,12 +197,15 @@ def seccion_anexos():
 
 def seccion_anexo_b2(aei_seleccionadas, ruta_excel):
 
-    st.markdown("### 🧭 Anexo B-2: Vinculación de AEI con Políticas Nacionales")
+#   st.markdown("### 🧭 Anexo B-2: Vinculación de AEI con Políticas Nacionales")
     st.markdown(
-        "Selecciona la **vinculación con la Política Nacional** correspondiente para cada AEI. "
-        "En algunos casos, una misma AEI puede estar asociada a más de una política; elige la más adecuada."
+        """
+        Selecciona la **vinculación con la Política Nacional** correspondiente para cada AEI.  
+        En algunos casos, una misma AEI puede estar asociada a más de una política; elige la más adecuada.  
+        Se despliega el **nombre de la Política Nacional** y la **denominación del servicio** vinculado.
+        """
     )
-
+    
     try:
         # Leer el archivo Excel de vinculaciones
         df_pn = pd.read_excel(ruta_excel)
@@ -210,7 +214,7 @@ def seccion_anexo_b2(aei_seleccionadas, ruta_excel):
         df_pn = df_pn.rename(columns={
             "Código AEI": "Código AEI",
             "Denominación AEI": "Denominación AEI",
-            "Nombre del indicador": "Nombre del indicador",
+            "Nombre del indicador AEI": "Nombre del indicador AEI",
             "Nombre de la Política Nacional": "Nombre de la Política Nacional",
             "Código_OP_PN": "Código_OP_PN",
             "Enunciado_OP_PN": "Enunciado_OP_PN",
@@ -222,7 +226,7 @@ def seccion_anexo_b2(aei_seleccionadas, ruta_excel):
         })
 
         # Filtrar solo AEI seleccionadas
-        aei_codigos = aei_df["Código AEI"].tolist() if "Código AEI" in aei_df.columns else []
+        aei_codigos = aei_seleccionadas["Código AEI"].tolist() if "Código AEI" in aei_seleccionadas.columns else []
         df_filtrado = df_pn[df_pn["Código AEI"].isin(aei_codigos)]
 
         resultados = []
@@ -236,18 +240,20 @@ def seccion_anexo_b2(aei_seleccionadas, ruta_excel):
                 continue
 
             denominacion = subset["Denominación AEI"].iloc[0]
-            indicador = subset["Nombre del indicador"].iloc[0]
+            indicador = subset["Nombre del indicador AEI"].iloc[0]
 
             st.markdown(f"#### 🔹 {codigo_aei} — {denominacion}")
 
             # Mostrar las opciones disponibles
             opciones = [
-                f"{row['Nombre de la Política Nacional']} | {row['Código_OP_PN']} | {row['Código_Lin_PN']} | {row['Código_Servicio_PN']}"
+ #              f"{row['Nombre de la Política Nacional']} | {row['Código_OP_PN']} | {row['Código_Lin_PN']} | {row['Código_Servicio_PN']}"
+                f"{row['Nombre de la Política Nacional']} | {row['Enunciado_Servicio_PN']}"
+
                 for _, row in subset.iterrows()
             ]
 
             seleccion = st.selectbox(
-                f"Selecciona la vinculación para {codigo_aei}",
+                f"Selecciona la vinculación PN para {codigo_aei}",
                 opciones,
                 key=f"sel_{codigo_aei}"
             )
@@ -264,7 +270,7 @@ def seccion_anexo_b2(aei_seleccionadas, ruta_excel):
                 "Código_Lin_PN", "Enunciado_Lin_PN",
                 "Código_Servicio_PN", "Enunciado_Servicio_PN",
                 "Indicador_Servicio_PN",
-                "Código AEI", "Denominación AEI", "Nombre del indicador"
+                "Código AEI", "Denominación AEI", "Nombre del indicador AEI"
             ]]
 
             st.markdown("### 🧾 Resumen final del Anexo B-2")
