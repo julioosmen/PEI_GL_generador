@@ -200,6 +200,7 @@ def seccion_anexo_b2(aei_seleccionadas, ruta_excel):
     st.markdown(
         "Selecciona la **vinculación con la Política Nacional** correspondiente para cada AEI. "
         "En algunos casos, una misma AEI puede estar asociada a más de una política; elige la más adecuada."
+        "Se despliega el nombre de la Política Nacional y la denominación del servicio vinculado."
     )
 
     try:
@@ -249,7 +250,7 @@ def seccion_anexo_b2(aei_seleccionadas, ruta_excel):
             ]
 
             seleccion = st.selectbox(
-                f"Selecciona la vinculación para {codigo_aei}",
+                f"Selecciona la vinculación PN para {codigo_aei}",
                 opciones,
                 key=f"sel_{codigo_aei}"
             )
