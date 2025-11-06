@@ -43,10 +43,12 @@ st.header("1️⃣ Misión")
 mision = seccion_mision()
 
 st.header("2️⃣ Objetivos Estratégicos Institucionales (OEI)")
-oei_df = seccion_oei()
+#oei_df = seccion_oei()
+oei_seleccionados = seccion_oei()
 
 st.header("3️⃣ Acciones Estratégicas Institucionales (AEI)")
-aei_df = seccion_aei(oei_df)
+#aei_df = seccion_aei(oei_df)
+aei_seleccionadas = seccion_aei(oei_seleccionados)
 
 st.header("4️⃣ Ruta Estratégica")
 ruta = seccion_ruta_estrategica()
