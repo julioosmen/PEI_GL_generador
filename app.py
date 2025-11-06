@@ -74,8 +74,8 @@ if st.button("📝 Generar documento Word"):
     with st.spinner("Generando PEI..."):
         #archivo_bytes = generar_pei_word(nombre, tipo, mision, oei_seleccionados, aei_seleccionadas, ruta, anexos)
         word_bytes = generar_pei_word(
-            nombre_muni=nombre_muni,
-            tipo=tipo_muni,
+            nombre_muni=nombre,
+            tipo=tipo,
             mision=mision,
             oei_df=oei_seleccionados,
             aei_df=aei_seleccionadas,
