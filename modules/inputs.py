@@ -210,7 +210,7 @@ def seccion_anexo_b2(aei_seleccionadas, ruta_excel):
         df_pn = df_pn.rename(columns={
             "Código AEI": "Código AEI",
             "Denominación AEI": "Denominación AEI",
-            "Nombre del indicador": "Nombre del indicador",
+            "Nombre del indicador AEI": "Nombre del indicador AEI",
             "Nombre de la Política Nacional": "Nombre de la Política Nacional",
             "Código_OP_PN": "Código_OP_PN",
             "Enunciado_OP_PN": "Enunciado_OP_PN",
@@ -264,7 +264,7 @@ def seccion_anexo_b2(aei_seleccionadas, ruta_excel):
                 "Código_Lin_PN", "Enunciado_Lin_PN",
                 "Código_Servicio_PN", "Enunciado_Servicio_PN",
                 "Indicador_Servicio_PN",
-                "Código AEI", "Denominación AEI", "Nombre del indicador"
+                "Código AEI", "Denominación AEI", "Nombre del indicador AEI"
             ]]
 
             st.markdown("### 🧾 Resumen final del Anexo B-2")
