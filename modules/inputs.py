@@ -156,20 +156,20 @@ def seccion_ruta_estrategica(oei_seleccionados, aei_seleccionadas, ruta_excel_vi
 
         # Aseguramos las columnas esperadas
         columnas_esperadas = [
-            "Cod_OEI", "Denominación OEI", "Vinculación OEI con la PGG",
-            "Cod AEI", "Denominación AEI", "Vinculación AEI con la PGG"
+            "Código OEI", "Denominación OEI", "Vinculación OEI con la PGG",
+            "Código AEI", "Denominación AEI", "Vinculación AEI con la PGG"
         ]
         if not all(col in df_vinc.columns for col in columnas_esperadas):
             st.error("❌ El archivo de vinculación no tiene las columnas esperadas.")
             return pd.DataFrame()
 
         # 🔹 Filtrar por OEI y AEI seleccionados
-        cod_oei_sel = oei_seleccionados["Código"].unique().tolist()
-        cod_aei_sel = aei_seleccionadas["Código"].unique().tolist()
+        cod_oei_sel = oei_seleccionados["Código OEI"].unique().tolist()
+        cod_aei_sel = aei_seleccionadas["Código AEI"].unique().tolist()
 
         df_filtrado = df_vinc[
-            df_vinc["Cod_OEI"].isin(cod_oei_sel) |
-            df_vinc["Cod AEI"].isin(cod_aei_sel)
+            df_vinc["Código OEI"].isin(cod_oei_sel) |
+            df_vinc["Código AEI"].isin(cod_aei_sel)
         ].copy()
 
         # 🔹 Si no hay coincidencias
