@@ -50,8 +50,17 @@ st.header("3️⃣ Acciones Estratégicas Institucionales (AEI)")
 #aei_df = seccion_aei(oei_df)
 aei_seleccionadas = seccion_aei(oei_seleccionados)
 
-st.header("4️⃣ Ruta Estratégica")
-ruta = seccion_ruta_estrategica()
+st.header("4️⃣ Ruta Estratégica: Vinculación con la PGG")
+# Ruta al archivo Excel de vinculación
+RUTA_VINCULACION_PGG = "data/vinculacion_pgg.xlsx"
+
+# Ejecutar sección
+#ruta = seccion_ruta_estrategica()
+ruta_estrategica_df = seccion_ruta_estrategica(
+    oei_seleccionados,
+    aei_seleccionadas,
+    RUTA_VINCULACION_PGG
+)
 
 st.header("5️⃣ Anexos B-1, B-2 y B-3")
 anexos = seccion_anexos()
