@@ -2,9 +2,34 @@ import streamlit as st
 import pandas as pd
 from io import StringIO
 
+#def seccion_mision():
+    #mision = st.text_area("Misión (texto)", height=120, placeholder="Escribe la misión de la municipalidad...")
+    #return mision
 def seccion_mision():
-    mision = st.text_area("Misión (texto)", height=120, placeholder="Escribe la misión de la municipalidad...")
-    return mision
+    """
+    Despliega la sección de Misión con guía y ejemplos predefinidos.
+    """
+    st.markdown("### 🧭 Misión Institucional")
+    st.info("**Estructura de redacción:** Rol central de la entidad + Población beneficiaria + Atributos.")
+
+    ejemplos = [
+        "Prestar servicios básicos a los vecinos de la localidad, garantizando calidad, eficiencia y oportunidad en su provisión.",
+        "Proveer servicios públicos esenciales a la población de la localidad, priorizando cobertura universal, equidad y atención inclusiva.",
+        "Brindar servicios básicos a los habitantes de la localidad, promoviendo sostenibilidad, responsabilidad ambiental y uso racional de recursos.",
+        "Ofrecer servicios públicos esenciales a los vecinos de la localidad, integrando innovación tecnológica, mejora continua y atención personalizada",
+        "Garantizar servicios básicos para la población de la localidad, asegurando continuidad, seguridad y respuesta rápida.",
+        "Desarrollar servicios públicos esenciales para los habitantes de la localidad, fomentando eficiencia operativa, transparencia y participación ciudadana.",
+        "Suministrar servicios básicos a la población de la localidad, optimizando recursos, reduciendo brechas y mejorando la accesibilidad.",
+        "Administrar servicios públicos esenciales para los vecinos de la localidad, fortaleciendo gestión participativa, control social y corresponsabilidad.",
+        "Proporcionar servicios básicos a los habitantes de la localidad, priorizando bienestar social, inclusión y equidad territorial.",
+        "Asegurar servicios públicos esenciales a la población de la localidad, incorporando estándares de calidad, modernización y sostenibilidad.",
+        "Brindar servicios públicos orientadas al bienestar de la población, mediante una gestión sostenible, ética, inclusiva y transparente."
+    ]
+
+    opcion = st.selectbox("Selecciona un ejemplo de misión (opcional)", [""] + ejemplos)
+    mision_texto = st.text_area("✍️ Redacta o ajusta la misión de la municipalidad:", value=opcion, height=150)
+
+    return mision_texto
 
 def _editar_tabla_interna(default_columns, default_rows=3, key=None):
     # Usa st.experimental_data_editor si está disponible, de lo contrario usa textarea CSV
