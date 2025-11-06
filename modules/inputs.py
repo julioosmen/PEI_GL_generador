@@ -196,7 +196,7 @@ def seccion_anexos():
 
 def seccion_anexo_b2(aei_seleccionadas, ruta_excel):
 
-    st.markdown("### 🧭 Anexo B-2: Vinculación de AEI con Políticas Nacionales")
+#   st.markdown("### 🧭 Anexo B-2: Vinculación de AEI con Políticas Nacionales")
     st.markdown(
         "Selecciona la **vinculación con la Política Nacional** correspondiente para cada AEI. "
         "En algunos casos, una misma AEI puede estar asociada a más de una política; elige la más adecuada."
