@@ -4,7 +4,7 @@ from modules.inputs import seccion_mision, seccion_oei, seccion_aei, seccion_rut
 from modules.word_generator import generar_pei_word
 
 st.set_page_config(page_title="Generador PEI Municipal", layout="wide")
-st.title("📘 Generador de Plan Estratégico Institucional (PEI)")
+st.title("📘 Generador del Plan Estratégico Institucional (PEI)")
 st.write("Aplicación para municipalidades provinciales y distritales del Perú.")
 
 # =====================================
@@ -18,21 +18,41 @@ df_pliegos = cargar_pliegos()
 
 st.subheader("🏛️ Información de la Municipalidad")
 
-codigos = df_pliegos["Codigo_Pliego"].astype(str).tolist()
-codigo_ingresado = st.selectbox("Selecciona o escribe el código del pliego", codigos)
+# Crear opciones combinadas para búsqueda
+opciones = [
+    f"{str(row['Codigo_Pliego'])} - {row['Nombre_Municipalidad']}"
+    for _, row in df_pliegos.iterrows()
+]
 
-datos = df_pliegos[df_pliegos["Codigo_Pliego"].astype(str) == codigo_ingresado].iloc[0]
+# Selectbox con búsqueda tanto por código como por nombre
+opcion_seleccionada = st.selectbox(
+    "🔍 Selecciona o escribe el código o nombre del pliego",
+    opciones,
+    index=None,
+    placeholder="Escribe el código o nombre..."
+)
 
-st.write(f"**Nombre:** {datos['Nombre_Municipalidad']}")
-st.write(f"**Tipo:** {datos['Tipo']}")
-st.write(f"**Departamento:** {datos['Departamento']}")
-st.write(f"**Provincia:** {datos['Provincia']}")
-if pd.notna(datos.get("Distrito")):
-    st.write(f"**Distrito:** {datos['Distrito']}")
+# Mostrar información cuando el usuario selecciona un pliego
 
-tipo = datos["Tipo"]
-nombre = datos["Nombre_Municipalidad"]
+if opcion_seleccionada:
+    # Extraer código
+    codigo_ingresado = opcion_seleccionada.split(" - ")[0].strip()
 
+    # Obtener datos del pliego seleccionado
+    datos = df_pliegos[df_pliegos["Codigo_Pliego"].astype(str) == codigo_ingresado].iloc[0]
+
+    # Mostrar información formateada
+    #st.markdown("### 🏛️ Información del Pliego Seleccionado")
+    st.markdown(f"""
+    **Nombre de la Municipalidad:** {datos['Nombre_Municipalidad']}  
+    **Tipo:** {datos['Tipo']}  
+    **Departamento:** {datos['Departamento']}  
+    **Provincia:** {datos['Provincia']}  
+    **Distrito:** {datos['Distrito']}  
+    """)
+else:
+    st.info("Por favor, selecciona un pliego para continuar.")
+    
 st.markdown("---")
 st.markdown("## Completa las secciones del PEI")
 

@@ -9,7 +9,7 @@ def seccion_mision():
     """
     Despliega la sección de Misión con guía y ejemplos predefinidos.
     """
-    st.markdown("### 🧭 Misión Institucional")
+#   st.markdown("### 🧭 Misión Institucional")
     st.info("**Estructura de redacción:** Rol central de la entidad + Población beneficiaria + Atributos.")
 
     ejemplos = [
@@ -54,7 +54,7 @@ def _editar_tabla_interna(default_columns, default_rows=3, key=None):
 # 🎯 OEI (Objetivos Estratégicos Institucionales)
 # =====================================================
 def seccion_oei():
-    st.markdown("### 🎯 Objetivos Estratégicos Institucionales (OEI)")
+    #st.markdown("### 🎯 Objetivos Estratégicos Institucionales (OEI)")
 
     # Dataset base con 11 OEI (ejemplo)
     oei_data = pd.DataFrame([
@@ -103,7 +103,7 @@ def cargar_aei_excel(path='data/aei.xlsx'):
         return pd.DataFrame(columns=["Código OEI","Código AEI","Denominación","Nombre del Indicador"])
 
 def seccion_aei(oei_seleccionados):
-    st.markdown("### 🧩 Acciones Estratégicas Institucionales (AEI)")
+    #st.markdown("### 🧩 Acciones Estratégicas Institucionales (AEI)")
 
     if oei_seleccionados is None or oei_seleccionados.empty:
         st.info("Primero selecciona al menos un OEI para ver las AEI disponibles.")
@@ -169,8 +169,8 @@ def seccion_ruta_estrategica(oei_seleccionados, aei_seleccionadas, ruta_excel_vi
         cod_aei_sel = aei_seleccionadas["Código AEI"].unique().tolist()
 
         df_filtrado = df_vinc[
-            df_vinc["Código OEI"].isin(cod_oei_sel) |
-            df_vinc["Código AEI"].isin(cod_aei_sel)
+            (df_vinc["Código OEI"].isin(cod_oei_sel)) &
+            (df_vinc["Código AEI"].isin(cod_aei_sel))
         ].copy()
 
         # 🔹 Si no hay coincidencias
@@ -272,9 +272,13 @@ def seccion_anexo_b2(aei_seleccionadas, ruta_excel):
                 "Indicador_Servicio_PN",
                 "Código AEI", "Denominación AEI", "Nombre del indicador AEI"
             ]]
-
-            st.markdown("### 🧾 Resumen final del Anexo B-2")
-            st.dataframe(df_final, use_container_width=True)
+          
+            # 🔹 Quitar índice numérico de pandas
+            df_final.reset_index(drop=True, inplace=True)
+            
+            st.markdown("### 🧾 Anexo B-2")
+            #st.dataframe(df_final, use_container_width=True)
+            st.dataframe(df_final, use_container_width=True, hide_index=True)
             return df_final
         else:
             st.info("Selecciona al menos una vinculación para continuar.")
