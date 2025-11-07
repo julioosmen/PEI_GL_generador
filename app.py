@@ -50,6 +50,9 @@ if opcion_seleccionada:
     **Provincia:** {datos['Provincia']}  
     **Distrito:** {datos['Distrito']}  
     """)
+
+    tipo = datos["Tipo"]
+    nombre = datos["Nombre_Municipalidad"]
 else:
     st.info("Por favor, selecciona un pliego para continuar.")
     
