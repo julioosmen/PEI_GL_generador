@@ -65,7 +65,16 @@ else:
 st.markdown("### 💾 Gestión de avance del PEI")
 
 # Asegurar que hay un código seleccionado
-if "codigo_ingresado" in locals() and codigo_ingresado:
+#if "codigo_ingresado" in locals() and codigo_ingresado:
+# Guardar el código seleccionado en la sesión
+if opcion_seleccionada:
+    st.session_state["codigo_ingresado"] = opcion_seleccionada.split(" - ")[0].strip()
+
+# Recuperar el código actual (si existe)
+codigo_ingresado = st.session_state.get("codigo_ingresado", None)
+
+# Mostrar botones si hay un código activo
+if codigo_ingresado:
     # Botón para grabar avance
     if st.button("💾 Grabar avance"):
         try:
