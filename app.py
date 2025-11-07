@@ -20,7 +20,7 @@ st.subheader("🏛️ Información de la Municipalidad")
 
 # Crear opciones combinadas para búsqueda
 opciones = [
-    f"{str(row['Codigo_Pliego'])} - {row['Nombre_Pliego']}"
+    f"{str(row['Codigo_Pliego'])} - {row['Nombre_Municipalidad']}"
     for _, row in df_pliegos.iterrows()
 ]
 
