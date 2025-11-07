@@ -53,9 +53,6 @@ if opcion_seleccionada:
 else:
     st.info("Por favor, selecciona un pliego para continuar.")
     
-tipo = datos["Tipo"]
-nombre = datos["Nombre_Municipalidad"]
-
 st.markdown("---")
 st.markdown("## Completa las secciones del PEI")
 
