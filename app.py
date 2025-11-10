@@ -65,80 +65,21 @@ else:
     st.info("Por favor, selecciona un pliego para continuar.")
 
 # ============================================================
-# 💾 GRABAR Y 📂 CARGAR AVANCE DEL PEI DESDE SUPABASE
+# 📂 CARGAR AVANCE ANTERIOR (ANTES DE LAS SECCIONES)
 # ============================================================
-st.markdown("### 💾 Gestión de avance del PEI")
-
-# Asegurar que hay un código seleccionado
-#if "codigo_ingresado" in locals() and codigo_ingresado:
-# Guardar el código seleccionado en la sesión
-if opcion_seleccionada:
-    st.session_state["codigo_ingresado"] = opcion_seleccionada.split(" - ")[0].strip()
-
-# Recuperar el código actual (si existe)
-codigo_ingresado = st.session_state.get("codigo_ingresado", None)
-
-# Mostrar botones si hay un código activo
-if codigo_ingresado:
-    # Botón para grabar avance
-    if st.button("💾 Grabar avance"):
-        try:
-            # Construir el payload con todos los elementos disponibles en tu app
-            data = {
-                "codigo_pliego": str(codigo_ingresado).strip(),
-                "mision": mision if 'mision' in locals() else "",
-                "oei_json": (
-                    oei_seleccionados.to_dict(orient="records")
-                    if 'oei_seleccionados' in locals() and not oei_seleccionados.empty
-                    else []
-                ),
-                "aei_json": (
-                    aei_seleccionadas.to_dict(orient="records")
-                    if 'aei_seleccionadas' in locals() and not aei_seleccionadas.empty
-                    else []
-                ),
-                "ruta_json": (
-                    ruta_estrategica_df.to_dict(orient="records")
-                    if 'ruta_estrategica_df' in locals() and ruta_estrategica_df is not None
-                    else []
-                ),
-                "anexo_b2_json": (
-                    anexo_b2_df.to_dict(orient="records")
-                    if 'anexo_b2_df' in locals() and anexo_b2_df is not None
-                    else []
-                ),
-                "anexos_json": anexos if 'anexos' in locals() else {}
-            }
-
-            guardar_pei_en_bd(data)
-            st.success("✅ Avance del PEI guardado correctamente en Supabase.")
-
-        except Exception as e:
-            st.error(f"❌ Error al guardar el avance: {e}")
-
-    # Botón para cargar avance
+if "codigo_ingresado" in locals() and codigo_ingresado:
     if st.button("📂 Cargar avance anterior"):
         try:
             registro = cargar_pei_desde_bd(str(codigo_ingresado).strip())
             if registro:
                 st.success(f"✅ Avance cargado (última actualización: {registro['fecha_actualizacion']})")
-
-                # Mostrar resumen general
-                st.write("**🧭 Misión:**", registro["mision"])
-                st.write("**📘 OEI guardadas:**", len(registro["oei_json"]) if registro["oei_json"] else 0)
-                st.write("**📗 AEI guardadas:**", len(registro["aei_json"]) if registro["aei_json"] else 0)
-
-                # Reconstruir DataFrames si quieres reusarlos
-                st.session_state["oei_json"] = pd.DataFrame(registro["oei_json"]) if registro["oei_json"] else pd.DataFrame()
-                st.session_state["aei_json"] = pd.DataFrame(registro["aei_json"]) if registro["aei_json"] else pd.DataFrame()
-
+                st.session_state["pei_registro"] = registro  # lo guardamos en sesión
             else:
                 st.warning("No hay avances guardados aún para esta municipalidad.")
         except Exception as e:
             st.error(f"❌ Error al cargar el avance: {e}")
 else:
-    st.warning("⚠️ Selecciona primero una municipalidad para poder grabar o cargar su avance.")
-
+    st.warning("⚠️ Selecciona primero una municipalidad para poder cargar su avance.")
 
 st.markdown("---")
 st.markdown("## Completa las secciones del PEI")
@@ -176,6 +117,29 @@ st.header(" Anexo B-2: Vinculación con Políticas Nacionales")
 
 RUTA_ANEXO_B2 = "data/anexo_b2_politicas.xlsx"
 anexo_b2_df = seccion_anexo_b2(aei_seleccionadas, RUTA_ANEXO_B2)
+
+# ============================================================
+# 💾 GUARDAR AVANCE (DESPUÉS DE LAS SECCIONES)
+# ============================================================
+if "codigo_ingresado" in locals() and codigo_ingresado:
+    if st.button("💾 Grabar avance"):
+        try:
+            data = {
+                "codigo_pliego": str(codigo_ingresado).strip(),
+                "mision": mision,
+                "oei_json": oei_seleccionados.to_dict(orient="records") if not oei_seleccionados.empty else [],
+                "aei_json": aei_seleccionadas.to_dict(orient="records") if not aei_seleccionadas.empty else [],
+                "ruta_json": ruta_estrategica_df.to_dict(orient="records") if not ruta_estrategica_df.empty else [],
+                "anexo_b2_json": anexo_b2_df.to_dict(orient="records") if not anexo_b2_df.empty else [],
+                "anexos_json": anexos,
+            }
+
+            guardar_pei_en_bd(data)
+            st.success("✅ Avance del PEI guardado correctamente en Supabase.")
+        except Exception as e:
+            st.error(f"❌ Error al guardar el avance: {e}")
+else:
+    st.warning("⚠️ Selecciona primero una municipalidad para grabar su avance.")
 
 if st.button("📝 Generar documento Word"):
     with st.spinner("Generando PEI..."):
