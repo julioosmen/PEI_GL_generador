@@ -216,12 +216,10 @@ def seccion_ruta_estrategica(oei_seleccionados, aei_seleccionadas, ruta_excel_vi
         st.error(f"❌ Error al cargar o procesar la vinculación: {e}")
         return pd.DataFrame()
 
-def seccion_anexos():
-    st.write("Ingresa contenido para Anexo B-1, B-2 y B-3. Puedes dejar vacío si no aplica.")
+def seccion_anexo_b1():
+    st.write("Ingresa contenido para Anexo B-1.")
     b1 = st.text_area("Anexo B-1", height=100, key='b1')
-    b2 = st.text_area("Anexo B-2", height=100, key='b2')
-    b3 = st.text_area("Anexo B-3", height=100, key='b3')
-    return {'B-1': b1, 'B-2': b2, 'B-3': b3}
+    return b1
 
 def seccion_anexo_b2(aei_seleccionadas, ruta_excel):
 
@@ -316,3 +314,7 @@ def seccion_anexo_b2(aei_seleccionadas, ruta_excel):
         st.error(f"❌ Error al cargar o procesar el Anexo B-2: {e}")
         return pd.DataFrame()
 
+def seccion_anexo_b3():
+    st.write("Ingresa contenido para Anexo B-3.")
+    b3 = st.text_area("Anexo B-1", height=100, key='b1')
+    return b3
