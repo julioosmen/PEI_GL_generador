@@ -316,5 +316,5 @@ def seccion_anexo_b2(aei_seleccionadas, ruta_excel):
 
 def seccion_anexo_b3():
     st.write("Ingresa contenido para Anexo B-3.")
-    b3 = st.text_area("Anexo B-1", height=100, key='b1')
+    b3 = st.text_area("Anexo B-3", height=100, key='b3')
     return b3
