@@ -1,49 +1,39 @@
-# modules/db.py
+from supabase import create_client, Client
 import streamlit as st
-from sqlalchemy import create_engine, text
-from datetime import datetime
-import json
 
-# Leer URL desde los secretos de Streamlit
-DATABASE_URL = st.secrets["DATABASE_URL"]
+# ======================================================
+# 🔗 Conexión a Supabase (vía REST API oficial)
+# ======================================================
+# Debes tener estas claves en tu archivo de secretos:
+# SUPABASE_URL = "https://jvvjdirsdlcnpgdtwlog.supabase.co"
+# SUPABASE_KEY = "tu_clave_api_anon"
 
-# Crear conexión
-engine = create_engine(DATABASE_URL, pool_pre_ping=True)
+url: str = st.secrets["SUPABASE_URL"]
+key: str = st.secrets["SUPABASE_KEY"]
+supabase: Client = create_client(url, key)
 
+# ======================================================
+# 💾 Funciones de guardar y cargar avances PEI
+# ======================================================
 def guardar_pei_en_bd(data: dict):
-    """Guarda o actualiza un registro en la tabla pei_avance."""
-    sql = text("""
-    INSERT INTO pei_avance (
-        codigo_pliego, mision, oei_json, aei_json, ruta_json, anexo_b2_json, anexos_json, fecha_actualizacion
-    )
-    VALUES (
-        :codigo_pliego, :mision, :oei_json::jsonb, :aei_json::jsonb, :ruta_json::jsonb, 
-        :anexo_b2_json::jsonb, :anexos_json::jsonb, :fecha
-    )
-    ON CONFLICT (codigo_pliego) DO UPDATE SET
-        mision = EXCLUDED.mision,
-        oei_json = EXCLUDED.oei_json,
-        aei_json = EXCLUDED.aei_json,
-        ruta_json = EXCLUDED.ruta_json,
-        anexo_b2_json = EXCLUDED.anexo_b2_json,
-        anexos_json = EXCLUDED.anexos_json,
-        fecha_actualizacion = EXCLUDED.fecha_actualizacion;
-    """)
-    with engine.begin() as conn:
-        conn.execute(sql, {
-            "codigo_pliego": data["codigo_pliego"],
-            "mision": data["mision"],
-            "oei_json": json.dumps(data["oei_json"]),
-            "aei_json": json.dumps(data["aei_json"]),
-            "ruta_json": json.dumps(data["ruta_json"]),
-            "anexo_b2_json": json.dumps(data["anexo_b2_json"]),
-            "anexos_json": json.dumps(data["anexos_json"]),
-            "fecha": datetime.utcnow()
-        })
+    """Inserta o actualiza un registro de avance del PEI en Supabase."""
+    codigo = data.get("codigo_pliego")
+    # Verificar si ya existe registro
+    result = supabase.table("pei_avance").select("codigo_pliego").eq("codigo_pliego", codigo).execute()
+
+    if result.data:
+        # Actualiza el registro existente
+        response = supabase.table("pei_avance").update(data).eq("codigo_pliego", codigo).execute()
+    else:
+        # Inserta un nuevo registro
+        response = supabase.table("pei_avance").insert(data).execute()
+
+    return response
+
 
 def cargar_pei_desde_bd(codigo_pliego: str):
-    """Carga el avance guardado para un código de pliego."""
-    sql = text("SELECT * FROM pei_avance WHERE codigo_pliego = :codigo_pliego;")
-    with engine.begin() as conn:
-        result = conn.execute(sql, {"codigo_pliego": codigo_pliego}).mappings().first()
-        return dict(result) if result else None
+    """Obtiene el registro de avance del PEI para un código de pliego."""
+    result = supabase.table("pei_avance").select("*").eq("codigo_pliego", codigo_pliego).execute()
+    if result.data:
+        return result.data[0]
+    return None
