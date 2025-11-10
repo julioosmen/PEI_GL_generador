@@ -27,8 +27,12 @@ def seccion_mision():
     ]
 
     opcion = st.selectbox("Selecciona un ejemplo de misión (opcional)", [""] + ejemplos)
-    mision_texto = st.text_area("✍️ Redacta o ajusta la misión de la municipalidad:", value=opcion, height=150)
-
+    mision_texto = st.text_area(
+        "✍️ Redacta o ajusta la misión:",
+        value=st.session_state.get("mision_texto", opcion),
+        height=150,
+        key="mision_texto"
+    )
     return mision_texto
 
 def _editar_tabla_interna(default_columns, default_rows=3, key=None):
@@ -54,12 +58,9 @@ def _editar_tabla_interna(default_columns, default_rows=3, key=None):
 # 🎯 OEI (Objetivos Estratégicos Institucionales)
 # =====================================================
 def seccion_oei():
-    #st.markdown("### 🎯 Objetivos Estratégicos Institucionales (OEI)")
+    st.markdown("### 🎯 Objetivos Estratégicos Institucionales (OEI)")
 
-    # Dataset base con 11 OEI (ejemplo)
     oei_data = pd.DataFrame([
-        #"Código": [f"OEI{i:02d}" for i in range(1, 12)],
-        #"Denominación": [
         {"Código": "OEI.01", "Denominación": "Promover el ordenamiento territorial en beneficio de población local", "Nombre del Indicador": "Porcentaje de la población local que reside en zonas que cumplen con los instrumentos técnicos sustentatorios para el ordenamiento territorial"},
         {"Código": "OEI.02", "Denominación": "Fortalecer el acceso a la atención primaria de salud preventiva de la población local", "Nombre del Indicador": "Porcentaje de personas satisfechas con las campañas y actividades de promoción de salud realizadas por la municipalidad"},
         {"Código": "OEI.03", "Denominación": "Promover el acceso a servicios educativos, deportivos y recreacionales con enfoque intercultural e inclusivo para la población local", "Nombre del Indicador": "Porcentaje de participantes satisfechos con los programas educativos organizados por la municipalidad"},
@@ -71,23 +72,37 @@ def seccion_oei():
         {"Código": "OEI.09", "Denominación": "Impulsar el crecimiento de la actividad empresarial, de emprendimientos y MYPES en la localidad", "Nombre del Indicador": "Porcentaje de micro y pequeñas empresas que operan con licencias municipales adecuadas"},
         {"Código": "OEI.10", "Denominación": "Mejorar el sistema de transporte y transitabilidad en beneficio de la población local", "Nombre del Indicador": "Porcentaje de puntos críticos de tránsito en vías locales atendidos y mitigados"},
         {"Código": "OEI.11", "Denominación": "Modernizar la Gestión Institucional", "Nombre del Indicador": "Porcentaje de ciudadanos satisfechos con la gestión institucional de la municipalidad"}
-        ])
+    ])
+
+    # Leer selecciones anteriores si existen
+    oei_previas = st.session_state.get("oei_json", pd.DataFrame())
+
+    opciones = oei_data.apply(
+        lambda r: f"{r['Código']} - {r['Denominación']} - {r['Nombre del Indicador']}", axis=1
+    ).tolist()
+
+    seleccionadas_previas = []
+    if not oei_previas.empty:
+        seleccionadas_previas = [
+            f"{r['Código']} - {r['Denominación']} - {r['Nombre del Indicador']}"
+            for _, r in oei_previas.iterrows()
+        ]
 
     seleccionados = st.multiselect(
         "Selecciona uno o más OEI:",
-#       options=oei_data.apply(lambda r: f"{r['Código']} - {r['Denominación']}", axis=1).tolist()
-        options=oei_data.apply(lambda r: f"{r['Código']} - {r['Denominación']} - {r['Nombre del Indicador']}", axis=1).tolist()
+        options=opciones,
+        default=seleccionadas_previas
     )
 
     if seleccionados:
-        # extraer códigos seleccionados
         codigos = [s.split(' - ')[0] for s in seleccionados]
-        df_sel = oei_data[oei_data["Código"].isin(codigos)][["Código","Denominación","Nombre del Indicador"]]
+        df_sel = oei_data[oei_data["Código"].isin(codigos)][
+            ["Código", "Denominación", "Nombre del Indicador"]
+        ]
         st.dataframe(df_sel.reset_index(drop=True), hide_index=True, use_container_width=True)
         return df_sel
     else:
-        st.warning("Selecciona al menos un OEI para continuar.")
-        return pd.DataFrame(columns=["Código","Denominación","Nombre del Indicador"])
+        return pd.DataFrame(columns=["Código", "Denominación", "Nombre del Indicador"])
 
 
 # =====================================================
@@ -102,38 +117,52 @@ def cargar_aei_excel(path='data/aei.xlsx'):
         return pd.DataFrame(columns=["Código OEI","Código AEI","Denominación","Nombre del Indicador"])
 
 def seccion_aei(oei_seleccionados):
-    #st.markdown("### 🧩 Acciones Estratégicas Institucionales (AEI)")
+    st.markdown("### 🧩 Acciones Estratégicas Institucionales (AEI)")
 
     if oei_seleccionados is None or oei_seleccionados.empty:
         st.info("Primero selecciona al menos un OEI para ver las AEI disponibles.")
-        return pd.DataFrame(columns=["Código OEI","Código AEI","Denominación","Nombre del Indicador"])
+        return pd.DataFrame(columns=["Código OEI", "Código AEI", "Denominación", "Nombre del Indicador"])
 
     aei_base = cargar_aei_excel()
 
-    # Filtrar AEI por los códigos OEI seleccionados
     codigos_oei = oei_seleccionados["Código"].astype(str).tolist()
-    aei_filtrado = aei_base[aei_base["Código OEI"].isin(codigos_oei)][["Código OEI","Código AEI","Denominación","Nombre del Indicador"]]
+    aei_filtrado = aei_base[aei_base["Código OEI"].isin(codigos_oei)][
+        ["Código OEI", "Código AEI", "Denominación", "Nombre del Indicador"]
+    ]
 
-    if aei_filtrado.empty:
-        st.warning("No se encontraron AEI para los OEI seleccionados en data/aei.xlsx.")
-        return pd.DataFrame(columns=["Código OEI","Código AEI","Denominación","Nombre del Indicador"])
-
-    # Para cada OEI mostrar las AEI disponibles y permitir seleccionar
+    aei_previas = st.session_state.get("aei_json", pd.DataFrame())
     seleccionadas_list = []
+
     for codigo in codigos_oei:
         subset = aei_filtrado[aei_filtrado["Código OEI"] == codigo]
-        opciones = subset.apply(lambda r: f"{r['Código AEI']} - {r['Denominación']}", axis=1).tolist()
-        seleccion = st.multiselect(f"Selecciona AEI para {codigo}", options=opciones, key=f"aei_{codigo}")
+        opciones = subset.apply(
+            lambda r: f"{r['Código AEI']} - {r['Denominación']}", axis=1
+        ).tolist()
+
+        default_values = []
+        if not aei_previas.empty:
+            default_values = [
+                f"{r['Código AEI']} - {r['Denominación']}"
+                for _, r in aei_previas[aei_previas["Código OEI"] == codigo].iterrows()
+            ]
+
+        seleccion = st.multiselect(
+            f"Selecciona AEI para {codigo}",
+            options=opciones,
+            default=default_values,
+            key=f"aei_{codigo}"
+        )
         seleccionadas_list.extend(seleccion)
 
     if seleccionadas_list:
         codigos_aei_sel = [s.split(' - ')[0] for s in seleccionadas_list]
-        df_sel = aei_filtrado[aei_filtrado["Código AEI"].isin(codigos_aei_sel)][["Código OEI","Código AEI","Denominación","Nombre del Indicador"]]
+        df_sel = aei_filtrado[aei_filtrado["Código AEI"].isin(codigos_aei_sel)][
+            ["Código OEI", "Código AEI", "Denominación", "Nombre del Indicador"]
+        ]
         st.dataframe(df_sel.reset_index(drop=True), hide_index=True, use_container_width=True)
         return df_sel
     else:
-        st.warning("Selecciona al menos una AEI para continuar.")
-        return pd.DataFrame(columns=["Código OEI","Código AEI","Denominación","Nombre del Indicador"])
+        return pd.DataFrame(columns=["Código OEI", "Código AEI", "Denominación", "Nombre del Indicador"])
 
 #def seccion_ruta_estrategica():
 #    ruta = st.text_area("Ruta Estratégica (breve descripción)", height=120, placeholder="Describe la ruta estratégica...")
