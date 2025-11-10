@@ -71,9 +71,23 @@ if "codigo_ingresado" in locals() and codigo_ingresado:
     if st.button("📂 Cargar avance anterior"):
         try:
             registro = cargar_pei_desde_bd(str(codigo_ingresado).strip())
+
             if registro:
                 st.success(f"✅ Avance cargado (última actualización: {registro['fecha_actualizacion']})")
-                st.session_state["pei_registro"] = registro  # lo guardamos en sesión
+
+                # 🧠 Guardar en sesión para persistencia
+                st.session_state["pei_registro"] = registro
+
+                # Rellenar campos visibles
+                st.session_state["mision_texto"] = registro["mision"]
+
+                st.session_state["oei_json"] = pd.DataFrame(registro["oei_json"]) if registro["oei_json"] else pd.DataFrame()
+                st.session_state["aei_json"] = pd.DataFrame(registro["aei_json"]) if registro["aei_json"] else pd.DataFrame()
+                st.session_state["ruta_json"] = pd.DataFrame(registro["ruta_json"]) if registro["ruta_json"] else pd.DataFrame()
+                st.session_state["anexo_b2_json"] = pd.DataFrame(registro["anexo_b2_json"]) if registro["anexo_b2_json"] else pd.DataFrame()
+                st.session_state["anexos_json"] = registro["anexos_json"]
+
+                st.info("Los campos se han precargado con la información guardada.")
             else:
                 st.warning("No hay avances guardados aún para esta municipalidad.")
         except Exception as e:
