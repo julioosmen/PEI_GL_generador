@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 import streamlit as st
 import pandas as pd
-from modules.inputs import seccion_mision, seccion_oei, seccion_aei, seccion_ruta_estrategica, seccion_anexos, seccion_anexo_b2
+from modules.inputs import seccion_mision, seccion_oei, seccion_aei, seccion_ruta_estrategica, seccion_anexo_b1, seccion_anexo_b2, seccion_anexo_b3
 from modules.word_generator import generar_pei_word
 from modules.db import guardar_pei_en_bd, cargar_pei_desde_bd
 
@@ -125,7 +125,7 @@ ruta_estrategica_df = seccion_ruta_estrategica(
 )
 
 st.header(" Anexos B-1")
-#anexos = seccion_anexos()
+anexos = seccion_anexo_b1()
 
 st.header(" Anexo B-2: Vinculación con Políticas Nacionales")
 
@@ -133,7 +133,7 @@ RUTA_ANEXO_B2 = "data/anexo_b2_politicas.xlsx"
 anexo_b2_df = seccion_anexo_b2(aei_seleccionadas, RUTA_ANEXO_B2)
 
 st.header(" Anexos B-3")
-anexos = seccion_anexos()
+anexos = seccion_anexo_b3()
 
 # ============================================================
 # 💾 GUARDAR AVANCE (DESPUÉS DE LAS SECCIONES)
