@@ -124,13 +124,16 @@ ruta_estrategica_df = seccion_ruta_estrategica(
     RUTA_VINCULACION_PGG
 )
 
-st.header(" Anexos B-1, B-2 y B-3")
-anexos = seccion_anexos()
+st.header(" Anexos B-1")
+#anexos = seccion_anexos()
 
 st.header(" Anexo B-2: Vinculación con Políticas Nacionales")
 
 RUTA_ANEXO_B2 = "data/anexo_b2_politicas.xlsx"
 anexo_b2_df = seccion_anexo_b2(aei_seleccionadas, RUTA_ANEXO_B2)
+
+st.header(" Anexos B-3")
+anexos = seccion_anexos()
 
 # ============================================================
 # 💾 GUARDAR AVANCE (DESPUÉS DE LAS SECCIONES)
