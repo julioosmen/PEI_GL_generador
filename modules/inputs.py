@@ -58,15 +58,18 @@ def _editar_tabla_interna(default_columns, default_rows=3, key=None):
 # 🎯 OEI (Objetivos Estratégicos Institucionales)
 # =====================================================
 def seccion_oei():
-    st.markdown("### 🎯 Objetivos Estratégicos Institucionales (OEI)")
+    #st.markdown("### 🎯 Objetivos Estratégicos Institucionales (OEI)")
 
+    # ===========================
+    # Cargar datos base (cacheado)
+    # ===========================
     @st.cache_data
     def cargar_oei():
         return pd.DataFrame([
             {"Código": "OEI.01", "Denominación": "Promover el ordenamiento territorial en beneficio de población local", "Nombre del Indicador": "Porcentaje de la población local que reside en zonas que cumplen con los instrumentos técnicos sustentatorios para el ordenamiento territorial"},
             {"Código": "OEI.02", "Denominación": "Fortalecer el acceso a la atención primaria de salud preventiva de la población local", "Nombre del Indicador": "Porcentaje de personas satisfechas con las campañas y actividades de promoción de salud realizadas por la municipalidad"},
             {"Código": "OEI.03", "Denominación": "Promover el acceso a servicios educativos, deportivos y recreacionales con enfoque intercultural e inclusivo para la población local", "Nombre del Indicador": "Porcentaje de participantes satisfechos con los programas educativos organizados por la municipalidad"},
-            # 🔹 OEI.04 con indicadores múltiples
+            # 🔹 OEI.04 con múltiples indicadores
             {"Código": "OEI.04", "Denominación": "Promover condiciones ambientales saludables y sostenibles para la población local", "Nombre del Indicador": None},
             {"Código": "OEI.05", "Denominación": "Reducir la exposición al riesgo de desastres de origen natural o antrópico de la población local", "Nombre del Indicador": "Porcentaje de zonas de la localidad con factores de riesgo de desastres eliminados o minimizados"},
             {"Código": "OEI.06", "Denominación": "Mejorar el acceso a servicios de protección social y defensa de derechos de la población en situación de vulnerabilidad de la localidad", "Nombre del Indicador": "Porcentaje de la población en situación de vulnerabilidad atendida por programas sociales municipales"},
@@ -79,27 +82,42 @@ def seccion_oei():
 
     oei_data = cargar_oei()
 
-    # Indicadores específicos del OEI.04
+    # ===========================
+    # Indicadores específicos OEI.04
+    # ===========================
     indicadores_oei04 = {
         "Ind.1": "Porcentaje de ciudadanos satisfechos con el servicio de recojo de residuos sólidos",
         "Ind.2": "Porcentaje de zonas de la localidad donde se han reducido puntos críticos de contaminación"
     }
 
+    # ===========================
+    # Cargar selecciones previas
+    # ===========================
     oei_previas = st.session_state.get("oei_json", pd.DataFrame())
 
+    # Crear opciones desplegables
     opciones = oei_data.apply(
-        lambda r: f"{r['Código']} - {r['Denominación']}" if pd.isna(r["Nombre del Indicador"]) 
-        else f"{r['Código']} - {r['Denominación']} - {r['Nombre del Indicador']}", 
+        lambda r: f"{r['Código']} - {r['Denominación']}"
+        if pd.isna(r["Nombre del Indicador"])
+        else f"{r['Código']} - {r['Denominación']} - {r['Nombre del Indicador']}",
         axis=1
     ).tolist()
 
+    # ===========================
+    # Manejo de defaults válidos
+    # ===========================
     seleccionadas_previas = []
     if isinstance(oei_previas, pd.DataFrame) and not oei_previas.empty:
-        seleccionadas_previas = [
-            f"{r['Código']} - {r['Denominación']} - {r['Nombre del Indicador']}"
-            for _, r in oei_previas.iterrows()
-        ]
+        for _, r in oei_previas.iterrows():
+            base_opcion = f"{r['Código']} - {r['Denominación']}"
+            # Solo agregar si la opción existe
+            for opcion in opciones:
+                if opcion.startswith(base_opcion):
+                    seleccionadas_previas.append(opcion)
 
+    # ===========================
+    # Selección de OEI
+    # ===========================
     seleccionados = st.multiselect(
         "Selecciona uno o más OEI:",
         options=opciones,
@@ -108,16 +126,23 @@ def seccion_oei():
 
     df_final = pd.DataFrame(columns=["Código", "Denominación", "Nombre del Indicador"])
 
+    # ===========================
+    # Procesar selecciones
+    # ===========================
     if seleccionados:
         codigos = [s.split(' - ')[0] for s in seleccionados]
 
-        # Procesar OEI normales
-        df_normales = oei_data[(oei_data["Código"].isin(codigos)) & (oei_data["Código"] != "OEI.04") & (oei_data["Nombre del Indicador"].notna())]
+        # OEI normales
+        df_normales = oei_data[
+            (oei_data["Código"].isin(codigos)) &
+            (oei_data["Código"] != "OEI.04") &
+            (oei_data["Nombre del Indicador"].notna())
+        ]
         df_final = pd.concat([df_final, df_normales], ignore_index=True)
 
-        # Procesar OEI.04 si está seleccionado
+        # OEI.04 con indicadores múltiples
         if "OEI.04" in codigos:
-            st.markdown("#### 🌱 Indicadores para OEI.04")
+            st.markdown("#### Indicadores para OEI.04")
             indicadores_sel = st.multiselect(
                 "Selecciona uno o ambos indicadores:",
                 options=list(indicadores_oei04.values()),
@@ -134,12 +159,19 @@ def seccion_oei():
                     }])
                 ], ignore_index=True)
 
+        # ===========================
         # Mostrar resultados
+        # ===========================
         if not df_final.empty:
             st.session_state["oei_json"] = df_final
-            st.dataframe(df_final.reset_index(drop=True), hide_index=True, use_container_width=True)
+            st.dataframe(
+                df_final.reset_index(drop=True),
+                hide_index=True,
+                use_container_width=True
+            )
 
     return df_final
+
 
 
 # =====================================================
@@ -154,7 +186,7 @@ def cargar_aei_excel(path='data/aei.xlsx'):
         return pd.DataFrame(columns=["Código OEI","Código AEI","Denominación","Nombre del Indicador"])
 
 def seccion_aei(oei_seleccionados):
-    st.markdown("### 🧩 Acciones Estratégicas Institucionales (AEI)")
+    #st.markdown("### 🧩 Acciones Estratégicas Institucionales (AEI)")
 
     if oei_seleccionados is None or oei_seleccionados.empty:
         st.info("Primero selecciona al menos un OEI para ver las AEI disponibles.")
