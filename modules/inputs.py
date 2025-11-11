@@ -57,121 +57,110 @@ def _editar_tabla_interna(default_columns, default_rows=3, key=None):
 # =====================================================
 # 🎯 OEI (Objetivos Estratégicos Institucionales)
 # =====================================================
+import streamlit as st
+import pandas as pd
+
 def seccion_oei():
-    #st.markdown("### 🎯 Objetivos Estratégicos Institucionales (OEI)")
+    st.subheader("🎯 Selección de Objetivos Estratégicos Institucionales (OEI)")
 
-    # ===========================
-    # Cargar datos base (cacheado)
-    # ===========================
-    @st.cache_data
-    def cargar_oei():
-        return pd.DataFrame([
-            {"Código": "OEI.01", "Denominación": "Promover el ordenamiento territorial en beneficio de población local", "Nombre del Indicador": "Porcentaje de la población local que reside en zonas que cumplen con los instrumentos técnicos sustentatorios para el ordenamiento territorial"},
-            {"Código": "OEI.02", "Denominación": "Fortalecer el acceso a la atención primaria de salud preventiva de la población local", "Nombre del Indicador": "Porcentaje de personas satisfechas con las campañas y actividades de promoción de salud realizadas por la municipalidad"},
-            {"Código": "OEI.03", "Denominación": "Promover el acceso a servicios educativos, deportivos y recreacionales con enfoque intercultural e inclusivo para la población local", "Nombre del Indicador": "Porcentaje de participantes satisfechos con los programas educativos organizados por la municipalidad"},
-            # 🔹 OEI.04 con múltiples indicadores
-            {"Código": "OEI.04", "Denominación": "Promover condiciones ambientales saludables y sostenibles para la población local", "Nombre del Indicador": None},
-            {"Código": "OEI.05", "Denominación": "Reducir la exposición al riesgo de desastres de origen natural o antrópico de la población local", "Nombre del Indicador": "Porcentaje de zonas de la localidad con factores de riesgo de desastres eliminados o minimizados"},
-            {"Código": "OEI.06", "Denominación": "Mejorar el acceso a servicios de protección social y defensa de derechos de la población en situación de vulnerabilidad de la localidad", "Nombre del Indicador": "Porcentaje de la población en situación de vulnerabilidad atendida por programas sociales municipales"},
-            {"Código": "OEI.07", "Denominación": "Fortalecer la prevención y disuasión del delito y violencia en beneficio de la población local", "Nombre del Indicador": "Porcentaje de zonas con alta incidencia delictiva con servicio de patrullaje integrado"},
-            {"Código": "OEI.08", "Denominación": "Garantizar la provisión de los servicios de agua potable y saneamiento en beneficio de la población local", "Nombre del Indicador": "Porcentaje de viviendas con servicio de agua potable y alcantarillado"},
-            {"Código": "OEI.09", "Denominación": "Impulsar el crecimiento de la actividad empresarial, de emprendimientos y MYPES en la localidad", "Nombre del Indicador": "Porcentaje de micro y pequeñas empresas que operan con licencias municipales adecuadas"},
-            {"Código": "OEI.10", "Denominación": "Mejorar el sistema de transporte y transitabilidad en beneficio de la población local", "Nombre del Indicador": "Porcentaje de puntos críticos de tránsito en vías locales atendidos y mitigados"},
-            {"Código": "OEI.11", "Denominación": "Modernizar la Gestión Institucional", "Nombre del Indicador": "Porcentaje de ciudadanos satisfechos con la gestión institucional de la municipalidad"}
-        ])
+    # ===============================
+    # 📊 DataFrame base (según CEPLAN)
+    # ===============================
+    oei_df = pd.DataFrame([
+        {"Código": "OEI.01", "Denominación": "Promover el ordenamiento territorial en beneficio de población local", "Nombre del Indicador": "Porcentaje de la población local que reside en zonas que cumplen con los instrumentos técnicos sustentatorios para el ordenamiento territorial"},
+        {"Código": "OEI.02", "Denominación": "Fortalecer el acceso a la atención primaria de salud preventiva de la población local", "Nombre del Indicador": "Porcentaje de personas satisfechas con las campañas y actividades de promoción de salud realizadas por la municipalidad"},
+        {"Código": "OEI.03", "Denominación": "Promover el acceso a servicios educativos, deportivos y recreacionales con enfoque intercultural e inclusivo para la población local", "Nombre del Indicador": "Porcentaje de participantes satisfechos con los programas educativos organizados por la municipalidad"},
+        {"Código": "OEI.04", "Denominación": "Promover condiciones ambientales saludables y sostenibles para la población local", "Nombre del Indicador": None},
+        {"Código": "OEI.05", "Denominación": "Reducir la exposición al riesgo de desastres de origen natural o antrópico de la población local", "Nombre del Indicador": "Porcentaje de zonas de la localidad con factores de riesgo de desastres eliminados o minimizados"},
+        {"Código": "OEI.06", "Denominación": "Mejorar el acceso a servicios de protección social y defensa de derechos de la población en situación de vulnerabilidad de la localidad", "Nombre del Indicador": "Porcentaje de la población en situación de vulnerabilidad atendida por programas sociales municipales"},
+        {"Código": "OEI.07", "Denominación": "Fortalecer la prevención y disuasión del delito y violencia en beneficio de la población local", "Nombre del Indicador": "Porcentaje de zonas con alta incidencia delictiva con servicio de patrullaje integrado"},
+        {"Código": "OEI.08", "Denominación": "Garantizar la provisión de los servicios de agua potable y saneamiento en beneficio de la población local", "Nombre del Indicador": "Porcentaje de viviendas con servicio de agua potable y alcantarillado"},
+        {"Código": "OEI.09", "Denominación": "Impulsar el crecimiento de la actividad empresarial, de emprendimientos y MYPES en la localidad", "Nombre del Indicador": "Porcentaje de micro y pequeñas empresas que operan con licencias municipales adecuadas"},
+        {"Código": "OEI.10", "Denominación": "Mejorar el sistema de transporte y transitabilidad en beneficio de la población local", "Nombre del Indicador": "Porcentaje de puntos críticos de tránsito en vías locales atendidos y mitigados"},
+        {"Código": "OEI.11", "Denominación": "Modernizar la Gestión Institucional", "Nombre del Indicador": "Porcentaje de ciudadanos satisfechos con la gestión institucional de la municipalidad"}
+    ])
 
-    oei_data = cargar_oei()
+    # ==================================================
+    # 🧩 Crear lista de opciones (solo códigos y nombres)
+    # ==================================================
+    opciones_oei = [
+        f"{row['Código']} - {row['Denominación']}"
+        for _, row in oei_df.iterrows()
+    ]
 
-    # ===========================
-    # Indicadores específicos OEI.04
-    # ===========================
-    indicadores_oei04 = {
-        "Ind.1": "Porcentaje de ciudadanos satisfechos con el servicio de recojo de residuos sólidos",
-        "Ind.2": "Porcentaje de zonas de la localidad donde se han reducido puntos críticos de contaminación"
-    }
+    # Evitar duplicados por si acaso
+    opciones_oei = sorted(list(set(opciones_oei)))
 
-    # ===========================
-    # Cargar selecciones previas
-    # ===========================
-    oei_previas = st.session_state.get("oei_json", pd.DataFrame())
+    # Recuperar selección previa del session_state
+    seleccion_prev = st.session_state.get("oei_json", [])
 
-    # Crear opciones desplegables
-    opciones = oei_data.apply(
-        lambda r: f"{r['Código']} - {r['Denominación']}"
-        if pd.isna(r["Nombre del Indicador"])
-        else f"{r['Código']} - {r['Denominación']} - {r['Nombre del Indicador']}",
-        axis=1
-    ).tolist()
+    # Determinar defaults válidos
+    defaults = [s.split(" - ")[0] + " - " + s.split(" - ")[1]
+                for s in seleccion_prev
+                if s.split(" - ")[0] + " - " + s.split(" - ")[1] in opciones_oei]
 
-    # ===========================
-    # Manejo de defaults válidos
-    # ===========================
-    seleccionadas_previas = []
-    if isinstance(oei_previas, pd.DataFrame) and not oei_previas.empty:
-        for _, r in oei_previas.iterrows():
-            base_opcion = f"{r['Código']} - {r['Denominación']}"
-            # Solo agregar si la opción existe
-            for opcion in opciones:
-                if opcion.startswith(base_opcion):
-                    seleccionadas_previas.append(opcion)
-
-    # ===========================
-    # Selección de OEI
-    # ===========================
+    # ==================================================
+    # 🟢 Paso 1: Selección de OEI
+    # ==================================================
     seleccionados = st.multiselect(
         "Selecciona uno o más OEI:",
-        options=opciones,
-        default=seleccionadas_previas
+        options=opciones_oei,
+        default=defaults
     )
 
-    df_final = pd.DataFrame(columns=["Código", "Denominación", "Nombre del Indicador"])
+    # ==================================================
+    # 🟡 Paso 2: Selección de indicadores para OEI.04
+    # ==================================================
+    indicadores_oei04 = []
+    if any("OEI.04" in s for s in seleccionados):
+        st.markdown("**Selecciona los indicadores del OEI.04:**")
 
-    # ===========================
-    # Procesar selecciones
-    # ===========================
-    if seleccionados:
-        codigos = [s.split(' - ')[0] for s in seleccionados]
-
-        # OEI normales
-        df_normales = oei_data[
-            (oei_data["Código"].isin(codigos)) &
-            (oei_data["Código"] != "OEI.04") &
-            (oei_data["Nombre del Indicador"].notna())
+        opciones_indicadores_oei04 = [
+            "Porcentaje de ciudadanos satisfechos con el servicio de recojo de residuos sólidos",
+            "Porcentaje de residuos sólidos aprovechados"
         ]
-        df_final = pd.concat([df_final, df_normales], ignore_index=True)
 
-        # OEI.04 con indicadores múltiples
-        if "OEI.04" in codigos:
-            st.markdown("#### Indicadores para OEI.04")
-            indicadores_sel = st.multiselect(
-                "Selecciona uno o ambos indicadores:",
-                options=list(indicadores_oei04.values()),
-                default=list(indicadores_oei04.values())  # ambos por defecto
+        indicadores_previos = [
+            s.split(" - ")[-1]
+            for s in seleccion_prev if s.startswith("OEI.04")
+        ]
+
+        seleccion_indicadores = st.multiselect(
+            "Indicadores disponibles:",
+            options=opciones_indicadores_oei04,
+            default=[i for i in indicadores_previos if i in opciones_indicadores_oei04]
+        )
+
+        for ind in seleccion_indicadores:
+            indicadores_oei04.append(f"OEI.04 - Promover condiciones ambientales saludables y sostenibles para la población local - {ind}")
+
+    # ==================================================
+    # 🔵 Paso 3: Construcción de la lista final
+    # ==================================================
+    seleccion_final = []
+    for opcion in seleccionados:
+        codigo = opcion.split(" - ")[0]
+        fila = oei_df[oei_df["Código"] == codigo].iloc[0]
+
+        if codigo == "OEI.04":
+            seleccion_final.extend(indicadores_oei04)
+        else:
+            seleccion_final.append(
+                f"{fila['Código']} - {fila['Denominación']} - {fila['Nombre del Indicador']}"
             )
 
-            for indicador in indicadores_sel:
-                df_final = pd.concat([
-                    df_final,
-                    pd.DataFrame([{
-                        "Código": "OEI.04",
-                        "Denominación": "Promover condiciones ambientales saludables y sostenibles para la población local",
-                        "Nombre del Indicador": indicador
-                    }])
-                ], ignore_index=True)
+    # Guardar selección
+    st.session_state["oei_json"] = seleccion_final
 
-        # ===========================
-        # Mostrar resultados
-        # ===========================
-        if not df_final.empty:
-            st.session_state["oei_json"] = df_final
-            st.dataframe(
-                df_final.reset_index(drop=True),
-                hide_index=True,
-                use_container_width=True
-            )
+    # ==================================================
+    # 📋 Paso 4: Mostrar resumen
+    # ==================================================
+    if seleccion_final:
+        st.write("### 📋 Resumen de OEI seleccionados")
+        resumen = [s.split(" - ", 2) for s in seleccion_final]
+        st.dataframe(pd.DataFrame(resumen, columns=["Código", "Denominación", "Indicador"]))
 
-    return df_final
-
+    return seleccion_final
 
 
 # =====================================================
