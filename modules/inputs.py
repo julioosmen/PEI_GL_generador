@@ -57,11 +57,9 @@ def _editar_tabla_interna(default_columns, default_rows=3, key=None):
 # =====================================================
 # 🎯 OEI (Objetivos Estratégicos Institucionales)
 # =====================================================
-import streamlit as st
-import pandas as pd
 
 def seccion_oei():
-    st.subheader("🎯 Selección de Objetivos Estratégicos Institucionales (OEI)")
+    #st.subheader("🎯 Selección de Objetivos Estratégicos Institucionales (OEI)")
 
     # ===============================
     # 📊 DataFrame base (según CEPLAN)
@@ -137,30 +135,30 @@ def seccion_oei():
     # ==================================================
     # 🔵 Paso 3: Construcción de la lista final
     # ==================================================
-    seleccion_final = []
+    oei_seleccionados = []
     for opcion in seleccionados:
         codigo = opcion.split(" - ")[0]
         fila = oei_df[oei_df["Código"] == codigo].iloc[0]
 
         if codigo == "OEI.04":
-            seleccion_final.extend(indicadores_oei04)
+            oei_seleccionados.extend(indicadores_oei04)
         else:
-            seleccion_final.append(
+            oei_seleccionados.append(
                 f"{fila['Código']} - {fila['Denominación']} - {fila['Nombre del Indicador']}"
             )
 
     # Guardar selección
-    st.session_state["oei_json"] = seleccion_final
+    st.session_state["oei_json"] = oei_seleccionados
 
     # ==================================================
     # 📋 Paso 4: Mostrar resumen
     # ==================================================
-    if seleccion_final:
+    if oei_seleccionados:
         st.write("### 📋 Resumen de OEI seleccionados")
-        resumen = [s.split(" - ", 2) for s in seleccion_final]
-        st.dataframe(pd.DataFrame(resumen, columns=["Código", "Denominación", "Indicador"]))
+        resumen = [s.split(" - ", 2) for s in oei_seleccionados]
+        st.dataframe(pd.DataFrame(resumen, columns=["Código", "Denominación", "Nombre del Indicador"]))
 
-    return seleccion_final
+    return oei_seleccionados
 
 
 # =====================================================
