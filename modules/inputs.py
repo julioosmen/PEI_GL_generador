@@ -175,7 +175,8 @@ def cargar_aei_excel(path='data/aei.xlsx'):
 def seccion_aei(oei_seleccionados):
     #st.markdown("### 🧩 Acciones Estratégicas Institucionales (AEI)")
 
-    if oei_seleccionados is None or oei_seleccionados.empty:
+    # Permitir lista o DataFrame vacío
+    if not oei_seleccionados or (hasattr(oei_seleccionados, "empty") and oei_seleccionados.empty):
         st.info("Primero selecciona al menos un OEI para ver las AEI disponibles.")
         return pd.DataFrame(columns=["Código OEI", "Código AEI", "Denominación", "Nombre del Indicador"])
 
