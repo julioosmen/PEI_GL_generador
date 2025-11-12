@@ -1,6 +1,7 @@
 from supabase import create_client, Client
 import streamlit as st
-
+from datetime import datetime
+import json
 # ======================================================
 # 🔗 Conexión a Supabase (vía REST API oficial)
 # ======================================================
@@ -13,27 +14,53 @@ key: str = st.secrets["SUPABASE_KEY"]
 supabase: Client = create_client(url, key)
 
 # ======================================================
-# 💾 Funciones de guardar y cargar avances PEI
+# 💾 Guardar avance del PEI
 # ======================================================
 def guardar_pei_en_bd(data: dict):
-    """Inserta o actualiza un registro de avance del PEI en Supabase."""
+    """
+    Inserta o actualiza el avance del PEI en la tabla pei_avance.
+    """
     codigo = data.get("codigo_pliego")
+    fecha = datetime.now().isoformat()
+
     # Verificar si ya existe registro
-    result = supabase.table("pei_avance").select("codigo_pliego").eq("codigo_pliego", codigo).execute()
+    existing = supabase.table("pei_avance").select("*").eq("codigo_pliego", codigo).execute()
 
-    if result.data:
-        # Actualiza el registro existente
-        response = supabase.table("pei_avance").update(data).eq("codigo_pliego", codigo).execute()
+    payload = {
+        "codigo_pliego": codigo,
+        "mision": data.get("mision", ""),
+        "oei_json": json.dumps(data.get("oei_json", [])),
+        "aei_json": json.dumps(data.get("aei_json", [])),
+        "ruta_json": json.dumps(data.get("ruta_json", [])),
+        "anexo_b2_json": json.dumps(data.get("anexo_b2_json", [])),
+        "anexos_json": json.dumps(data.get("anexos_json", {})),
+        "fecha_actualizacion": fecha,
+    }
+
+    if existing.data:
+        # 🔄 Update existente
+        supabase.table("pei_avance").update(payload).eq("codigo_pliego", codigo).execute()
     else:
-        # Inserta un nuevo registro
-        response = supabase.table("pei_avance").insert(data).execute()
+        # 🆕 Insert nuevo
+        supabase.table("pei_avance").insert(payload).execute()
 
-    return response
-
-
+# ======================================================
+# 📂 Cargar avance del PEI
+# ======================================================
 def cargar_pei_desde_bd(codigo_pliego: str):
-    """Obtiene el registro de avance del PEI para un código de pliego."""
-    result = supabase.table("pei_avance").select("*").eq("codigo_pliego", codigo_pliego).execute()
-    if result.data:
-        return result.data[0]
-    return None
+    """
+    Recupera el avance guardado para un código de pliego.
+    """
+    res = supabase.table("pei_avance").select("*").eq("codigo_pliego", codigo_pliego).execute()
+    if not res.data:
+        return None
+
+    registro = res.data[0]
+    # Convertir JSON strings a estructuras Python
+    for campo in ["oei_json", "aei_json", "ruta_json", "anexo_b2_json", "anexos_json"]:
+        if isinstance(registro.get(campo), str):
+            try:
+                registro[campo] = json.loads(registro[campo])
+            except json.JSONDecodeError:
+                registro[campo] = []
+    return registro
