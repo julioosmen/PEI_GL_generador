@@ -5,8 +5,6 @@ from io import StringIO
 #def seccion_mision():
     #mision = st.text_area("Misión (texto)", height=120, placeholder="Escribe la misión de la municipalidad...")
     #return mision
-import streamlit as st
-
 def seccion_mision():
     """
     Despliega la sección de Misión Institucional con guía y ejemplos predefinidos.
@@ -28,20 +26,28 @@ def seccion_mision():
         "Brindar servicios públicos orientados al bienestar de la población, mediante una gestión sostenible, ética, inclusiva y transparente."
     ]
 
-    # Mostrar el selector de ejemplos
+    # Inicializar el estado si no existe
+    if "mision_texto" not in st.session_state:
+        st.session_state["mision_texto"] = ""
+
+    # Selector de ejemplos
     opcion = st.selectbox("Selecciona un ejemplo de misión (opcional)", ["Selecciona un ejemplo..."] + ejemplos)
 
-    # Si el usuario selecciona un ejemplo, se actualiza automáticamente el campo de texto
-    if opcion != "Selecciona un ejemplo...":
+    # Si el usuario elige un ejemplo, actualiza el texto y fuerza recarga
+    if opcion != "Selecciona un ejemplo..." and opcion != st.session_state["mision_texto"]:
         st.session_state["mision_texto"] = opcion
+        st.experimental_rerun()  # 🔁 fuerza actualización inmediata del área de texto
 
-    # Campo para redactar o editar la misión
+    # Campo de texto editable
     mision_texto = st.text_area(
         "✍️ Redacta o ajusta la misión institucional:",
-        value=st.session_state.get("mision_texto", ""),
+        value=st.session_state["mision_texto"],
         height=150,
-        key="mision_texto_input"
+        key="mision_texto_area"
     )
+
+    # Mantener actualizado el estado cuando el usuario edita manualmente
+    st.session_state["mision_texto"] = mision_texto
 
     return mision_texto
 
