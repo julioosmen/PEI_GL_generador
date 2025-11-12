@@ -27,7 +27,7 @@ def seccion_mision():
         "Brindar servicios públicos orientados al bienestar de la población, mediante una gestión sostenible, ética, inclusiva y transparente."
     ]
 
-    # Inicializar variables de sesión si no existen
+    # Inicializa los valores de sesión solo si no existen
     if "mision_texto" not in st.session_state:
         st.session_state["mision_texto"] = ""
     if "mision_texto_area" not in st.session_state:
@@ -35,13 +35,12 @@ def seccion_mision():
 
     opcion = st.selectbox("Selecciona un ejemplo de misión (opcional)", ["Selecciona un ejemplo..."] + ejemplos)
 
-    # ✅ Si cambia la selección, actualizamos ambos valores y forzamos recarga
+    # ✅ Si el usuario cambia de ejemplo, actualizamos antes de dibujar el área de texto
     if opcion != "Selecciona un ejemplo..." and opcion != st.session_state["mision_texto"]:
         st.session_state["mision_texto"] = opcion
         st.session_state["mision_texto_area"] = opcion
-        st.rerun()
 
-    # ✅ Mostrar área de texto con el valor sincronizado
+    # ✅ Renderizamos el área de texto (ya sincronizado)
     mision_texto = st.text_area(
         "✍️ Redacta o ajusta la misión institucional:",
         value=st.session_state["mision_texto_area"],
@@ -49,9 +48,8 @@ def seccion_mision():
         key="mision_texto_area"
     )
 
-    # Guardar lo escrito manualmente
+    # Guardamos lo que el usuario escriba manualmente
     st.session_state["mision_texto"] = mision_texto
-    st.session_state["mision_texto_area"] = mision_texto
 
     return mision_texto
 
