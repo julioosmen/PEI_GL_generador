@@ -36,7 +36,7 @@ def seccion_mision():
     # Si el usuario elige un ejemplo, actualiza el texto y fuerza recarga
     if opcion != "Selecciona un ejemplo..." and opcion != st.session_state["mision_texto"]:
         st.session_state["mision_texto"] = opcion
-        st.experimental_rerun()  # 🔁 fuerza actualización inmediata del área de texto
+        st.rerun()
 
     # Campo de texto editable
     mision_texto = st.text_area(
