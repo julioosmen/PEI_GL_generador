@@ -5,6 +5,7 @@ from io import StringIO
 #def seccion_mision():
     #mision = st.text_area("Misión (texto)", height=120, placeholder="Escribe la misión de la municipalidad...")
     #return mision
+
 def seccion_mision():
     """
     Despliega la sección de Misión Institucional con guía y ejemplos predefinidos.
@@ -26,30 +27,34 @@ def seccion_mision():
         "Brindar servicios públicos orientados al bienestar de la población, mediante una gestión sostenible, ética, inclusiva y transparente."
     ]
 
-    # Inicializar el estado si no existe
+    # Inicializar variables de sesión si no existen
     if "mision_texto" not in st.session_state:
         st.session_state["mision_texto"] = ""
+    if "mision_texto_area" not in st.session_state:
+        st.session_state["mision_texto_area"] = ""
 
-    # Selector de ejemplos
     opcion = st.selectbox("Selecciona un ejemplo de misión (opcional)", ["Selecciona un ejemplo..."] + ejemplos)
 
-    # Si el usuario elige un ejemplo, actualiza el texto y fuerza recarga
+    # ✅ Si cambia la selección, actualizamos ambos valores y forzamos recarga
     if opcion != "Selecciona un ejemplo..." and opcion != st.session_state["mision_texto"]:
         st.session_state["mision_texto"] = opcion
+        st.session_state["mision_texto_area"] = opcion
         st.rerun()
 
-    # Campo de texto editable
+    # ✅ Mostrar área de texto con el valor sincronizado
     mision_texto = st.text_area(
         "✍️ Redacta o ajusta la misión institucional:",
-        value=st.session_state["mision_texto"],
+        value=st.session_state["mision_texto_area"],
         height=150,
         key="mision_texto_area"
     )
 
-    # Mantener actualizado el estado cuando el usuario edita manualmente
+    # Guardar lo escrito manualmente
     st.session_state["mision_texto"] = mision_texto
+    st.session_state["mision_texto_area"] = mision_texto
 
     return mision_texto
+
 
 
 def _editar_tabla_interna(default_columns, default_rows=3, key=None):
