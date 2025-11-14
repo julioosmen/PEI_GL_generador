@@ -106,7 +106,7 @@ st.markdown("## Completa las secciones del PEI")
 # =====================================
 
 st.header("1️⃣ Situación futura deseada")
-mision = seccion_situacion_futura_deseada()
+situacion_futura_deseada = seccion_situacion_futura_deseada()
 
 st.header("2️⃣ Misión") 
 mision = seccion_mision()
