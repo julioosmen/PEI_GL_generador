@@ -86,7 +86,7 @@ if "codigo_ingresado" in locals() and codigo_ingresado:
                 st.session_state["pei_registro"] = registro
 
                 # Rellenar campos visibles
-                st.session_state["mision"] = registro["mision"]
+                st.session_state["mision_texto"] = registro["mision"]
                 #st.session_state["situacion_futura_deseada"] = registro["situacion_futura_deseada"]
                 st.session_state["oei_json"] = pd.DataFrame(registro["oei_json"]) if registro["oei_json"] else pd.DataFrame()
                 st.session_state["aei_json"] = pd.DataFrame(registro["aei_json"]) if registro["aei_json"] else pd.DataFrame()
@@ -155,7 +155,7 @@ if "codigo_ingresado" in locals() and codigo_ingresado:
             data = {
                 "codigo_pliego": str(codigo_ingresado).strip(),
                 "situacion_futura_deseada": situacion_futura_deseada,
-                "mision": mision,
+                "mision": mision_texto,
                 "oei_json": oei_seleccionados.to_dict(orient="records") if not oei_seleccionados.empty else [],
                 "aei_json": aei_seleccionadas.to_dict(orient="records") if not aei_seleccionadas.empty else [],
                 "ruta_json": ruta_estrategica_df.to_dict(orient="records") if not ruta_estrategica_df.empty else [],
@@ -178,7 +178,7 @@ if st.button("📝 Generar documento Word"):
             codigo=codigo,
             tipo=tipo,
             #situacion_futura_deseada=situacion_futura_deseada,
-            mision=mision,
+            mision=mision_texto,
             oei_df=oei_seleccionados,
             aei_df=aei_seleccionadas,
             ruta_df=ruta_estrategica_df,
