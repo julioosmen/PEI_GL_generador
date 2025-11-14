@@ -54,6 +54,7 @@ if opcion_seleccionada:
     #st.markdown("### 🏛️ Información del Pliego Seleccionado")
     st.markdown(f"""
     **Nombre de la Municipalidad:** {datos['Nombre_Municipalidad']}  
+    **Código del pliego:** {datos['Codigo_Pliego']}  
     **Tipo:** {datos['Tipo']}  
     **Departamento:** {datos['Departamento']}  
     **Provincia:** {datos['Provincia']}  
@@ -62,6 +63,7 @@ if opcion_seleccionada:
 
     tipo = datos["Tipo"]
     nombre = datos["Nombre_Municipalidad"]
+    codigo = datos["Codigo_Pliego"]
 else:
     st.info("Por favor, selecciona un pliego para continuar.")
 
