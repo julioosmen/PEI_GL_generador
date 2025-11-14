@@ -14,7 +14,7 @@ else:
 st.set_page_config(page_title="Generador PEI Municipal", layout="wide")
 st.title("📘 Generador del Plan Estratégico Institucional (PEI)")
 st.write("Aplicación para municipalidades provinciales y distritales del Perú.")
-st.write("Esta herramienta considera lo establecido en la Guía para el Planeamiento Institucional, actualizada por Resolución de Presidencia de Consejo Directivo N°0055-2024-CEPLAN/PCD.")
+st.write("Esta herramienta considera lo establecido en la **Guía para el Planeamiento Institucional**, actualizada por Resolución de Presidencia de Consejo Directivo N°0055-2024-CEPLAN/PCD.")
 
 # =====================================
 # 🏛️ Información inicial desde pliegos.xlsx
