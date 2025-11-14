@@ -15,6 +15,7 @@ from modules.db import guardar_pei_en_bd, cargar_pei_desde_bd
 if "SUPABASE_URL" not in st.secrets:
     pass  # Puedes registrar un log o manejar un error interno si deseas
 st.set_page_config(page_title="Generador PEI Municipal", layout="wide")
+st.image("logo.png", width=160)   # Mostrar logo centrado - Ajusta el tamaño si deseas
 st.title("📘 Generador del Plan Estratégico Institucional (PEI) de los gobiernos locales")
 st.write("Aplicación para municipalidades provinciales y distritales del Perú.")
 st.write("Esta herramienta considera lo establecido en la **Guía para el Planeamiento Institucional**, actualizada por Resolución de Presidencia de Consejo Directivo N°0055-2024-CEPLAN/PCD.")
