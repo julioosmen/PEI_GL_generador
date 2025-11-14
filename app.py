@@ -7,10 +7,13 @@ from modules.word_generator import generar_pei_word
 from modules.db import guardar_pei_en_bd, cargar_pei_desde_bd
 
 # ✅ Verificar que DATABASE_URL existe en los secretos (sin mostrar la clave)
-if "SUPABASE_URL" in st.secrets:
-    st.success("🔒 Se detectó correctamente la clave DATABASE_URL en los secretos de Streamlit.")
-else:
-    st.error("❌ No se encontró DATABASE_URL en los secretos. Verifica en Edit secrets.")
+#if "SUPABASE_URL" in st.secrets:
+#    st.success("🔒 Se detectó correctamente la clave DATABASE_URL en los secretos de Streamlit.")
+#else:
+#    st.error("❌ No se encontró DATABASE_URL en los secretos. Verifica en Edit secrets.")
+# Verificación silenciosa de secretos (no se muestra al usuario)
+if "SUPABASE_URL" not in st.secrets:
+    pass  # Puedes registrar un log o manejar un error interno si deseas
 st.set_page_config(page_title="Generador PEI Municipal", layout="wide")
 st.title("📘 Generador del Plan Estratégico Institucional (PEI) de los gobiernos locales")
 st.write("Aplicación para municipalidades provinciales y distritales del Perú.")
