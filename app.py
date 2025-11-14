@@ -12,7 +12,7 @@ if "SUPABASE_URL" in st.secrets:
 else:
     st.error("❌ No se encontró DATABASE_URL en los secretos. Verifica en Edit secrets.")
 st.set_page_config(page_title="Generador PEI Municipal", layout="wide")
-st.title("📘 Generador del Plan Estratégico Institucional (PEI)")
+st.title("📘 Generador del Plan Estratégico Institucional (PEI) de los gobiernos locales")
 st.write("Aplicación para municipalidades provinciales y distritales del Perú.")
 st.write("Esta herramienta considera lo establecido en la **Guía para el Planeamiento Institucional**, actualizada por Resolución de Presidencia de Consejo Directivo N°0055-2024-CEPLAN/PCD.")
 
@@ -99,7 +99,7 @@ else:
     st.warning("⚠️ Selecciona primero una municipalidad para poder cargar su avance.")
 
 st.markdown("---")
-st.markdown("## Completa las secciones del PEI")
+st.markdown("## Completa la estructura PEI para gobiernos locales")
 
 # =====================================
 # Secciones del PEI
