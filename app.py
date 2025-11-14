@@ -86,7 +86,8 @@ if "codigo_ingresado" in locals() and codigo_ingresado:
                 st.session_state["pei_registro"] = registro
 
                 # Rellenar campos visibles
-                st.session_state["mision_texto"] = registro["mision_texto"]
+                #st.session_state["mision_texto"] = registro["mision_texto"]
+                st.session_state["mision"] = registro.get("mision", registro.get("mision_texto", ""))
                 #st.session_state["situacion_futura_deseada"] = registro["situacion_futura_deseada"]
                 st.session_state["oei_json"] = pd.DataFrame(registro["oei_json"]) if registro["oei_json"] else pd.DataFrame()
                 st.session_state["aei_json"] = pd.DataFrame(registro["aei_json"]) if registro["aei_json"] else pd.DataFrame()
