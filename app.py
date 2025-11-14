@@ -166,6 +166,7 @@ if st.button("📝 Generar documento Word"):
         #archivo_bytes = generar_pei_word(nombre, tipo, mision, oei_seleccionados, aei_seleccionadas, ruta, anexos)
         word_bytes = generar_pei_word(
             nombre_muni=nombre,
+            codigo=codigo
             tipo=tipo,
             mision=mision,
             oei_df=oei_seleccionados,
