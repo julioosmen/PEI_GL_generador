@@ -3,6 +3,9 @@ import pandas as pd
 from io import StringIO
 
 def seccion_situacion_futura_deseada():
+
+    st.info("**Debe responder:** ¿Qué alcanzará la entidad? + ¿Cómo lo logrará? + ¿Qué escenarios se mitigarán o aprovecharán?")
+
     situacion_futura_deseada = st.text_area("Situación futura deseada (texto)", height=120, placeholder="Escribe la situación futura deseada de la municipalidad...")
     return situacion_futura_deseada
 
