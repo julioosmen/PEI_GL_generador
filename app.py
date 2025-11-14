@@ -173,7 +173,7 @@ if st.button("📝 Generar documento Word"):
             nombre_muni=nombre,
             codigo=codigo,
             tipo=tipo,
-            situacion_futura_deseada=situacion_futura_deseada
+            situacion_futura_deseada=situacion_futura_deseada,
             mision=mision,
             oei_df=oei_seleccionados,
             aei_df=aei_seleccionadas,
