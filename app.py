@@ -87,7 +87,7 @@ if "codigo_ingresado" in locals() and codigo_ingresado:
 
                 # Rellenar campos visibles
                 st.session_state["mision"] = registro["mision"]
-                st.session_state["situacion_futura_deseada"] = registro["situacion_futura_deseada"]
+                #st.session_state["situacion_futura_deseada"] = registro["situacion_futura_deseada"]
                 st.session_state["oei_json"] = pd.DataFrame(registro["oei_json"]) if registro["oei_json"] else pd.DataFrame()
                 st.session_state["aei_json"] = pd.DataFrame(registro["aei_json"]) if registro["aei_json"] else pd.DataFrame()
                 st.session_state["ruta_json"] = pd.DataFrame(registro["ruta_json"]) if registro["ruta_json"] else pd.DataFrame()
@@ -177,7 +177,7 @@ if st.button("📝 Generar documento Word"):
             nombre_muni=nombre,
             codigo=codigo,
             tipo=tipo,
-            situacion_futura_deseada=situacion_futura_deseada,
+            #situacion_futura_deseada=situacion_futura_deseada,
             mision=mision,
             oei_df=oei_seleccionados,
             aei_df=aei_seleccionadas,
