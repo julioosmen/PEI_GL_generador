@@ -82,8 +82,8 @@ if "codigo_ingresado" in locals() and codigo_ingresado:
                 st.session_state["pei_registro"] = registro
 
                 # Rellenar campos visibles
-                st.session_state["mision_texto"] = registro["mision"]
-
+                st.session_state["mision"] = registro["mision"]
+                st.session_state["situacion_futura_deseada"] = registro["situacion_futura_deseada"]
                 st.session_state["oei_json"] = pd.DataFrame(registro["oei_json"]) if registro["oei_json"] else pd.DataFrame()
                 st.session_state["aei_json"] = pd.DataFrame(registro["aei_json"]) if registro["aei_json"] else pd.DataFrame()
                 st.session_state["ruta_json"] = pd.DataFrame(registro["ruta_json"]) if registro["ruta_json"] else pd.DataFrame()
@@ -104,18 +104,22 @@ st.markdown("## Completa las secciones del PEI")
 # =====================================
 # Secciones del PEI
 # =====================================
-st.header("1️⃣ Misión")
+
+st.header("1️⃣ Situación futura deseada")
+mision = seccion_situacion_futura_deseada()
+
+st.header("2️⃣ Misión") 
 mision = seccion_mision()
 
-st.header("2️⃣ Objetivos Estratégicos Institucionales (OEI)")
+st.header("3️⃣ Objetivos Estratégicos Institucionales (OEI)")
 #oei_df = seccion_oei()
 oei_seleccionados = seccion_oei()
 
-st.header("3️⃣ Acciones Estratégicas Institucionales (AEI)")
+st.header("4️⃣ Acciones Estratégicas Institucionales (AEI)")
 #aei_df = seccion_aei(oei_df)
 aei_seleccionadas = seccion_aei(oei_seleccionados)
 
-st.header("4️⃣ Ruta Estratégica: Vinculación con la PGG")
+st.header("5️⃣ Ruta Estratégica: Vinculación con la PGG")
 # Ruta al archivo Excel de vinculación
 RUTA_VINCULACION_PGG = "data/vinculacion_pgg.xlsx"
 
@@ -146,6 +150,7 @@ if "codigo_ingresado" in locals() and codigo_ingresado:
         try:
             data = {
                 "codigo_pliego": str(codigo_ingresado).strip(),
+                "situacion_futura_deseada": situacion_futura_deseada,
                 "mision": mision,
                 "oei_json": oei_seleccionados.to_dict(orient="records") if not oei_seleccionados.empty else [],
                 "aei_json": aei_seleccionadas.to_dict(orient="records") if not aei_seleccionadas.empty else [],
@@ -168,6 +173,7 @@ if st.button("📝 Generar documento Word"):
             nombre_muni=nombre,
             codigo=codigo,
             tipo=tipo,
+            situacion_futura_deseada=situacion_futura_deseada
             mision=mision,
             oei_df=oei_seleccionados,
             aei_df=aei_seleccionadas,
