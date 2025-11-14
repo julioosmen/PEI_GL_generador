@@ -113,7 +113,7 @@ st.header("1️⃣ Situación futura deseada")
 situacion_futura_deseada = seccion_situacion_futura_deseada()
 
 st.header("2️⃣ Misión") 
-mision = seccion_mision()
+mision_texto = seccion_mision()
 
 st.header("3️⃣ Objetivos Estratégicos Institucionales (OEI)")
 #oei_df = seccion_oei()
@@ -172,13 +172,13 @@ else:
 
 if st.button("📝 Generar documento Word"):
     with st.spinner("Generando PEI..."):
-        #archivo_bytes = generar_pei_word(nombre, tipo, mision, oei_seleccionados, aei_seleccionadas, ruta, anexos)
+        #archivo_bytes = generar_pei_word(nombre, tipo, mision_texto, oei_seleccionados, aei_seleccionadas, ruta, anexos)
         word_bytes = generar_pei_word(
             nombre_muni=nombre,
             codigo=codigo,
             tipo=tipo,
             #situacion_futura_deseada=situacion_futura_deseada,
-            mision=mision_texto,
+            mision_texto=mision_texto,
             oei_df=oei_seleccionados,
             aei_df=aei_seleccionadas,
             ruta_df=ruta_estrategica_df,
