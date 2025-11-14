@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 import streamlit as st
 import pandas as pd
-from modules.inputs import seccion_mision, seccion_oei, seccion_aei, seccion_ruta_estrategica, seccion_anexo_b1, seccion_anexo_b2, seccion_anexo_b3
+from modules.inputs import seccion_situacion_futura_deseada, seccion_mision, seccion_oei, seccion_aei, seccion_ruta_estrategica, seccion_anexo_b1, seccion_anexo_b2, seccion_anexo_b3
 from modules.word_generator import generar_pei_word
 from modules.db import guardar_pei_en_bd, cargar_pei_desde_bd
 
