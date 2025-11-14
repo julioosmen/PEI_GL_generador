@@ -2,18 +2,22 @@ import json
 from datetime import datetime
 import streamlit as st
 import pandas as pd
-from modules.inputs import seccion_mision, seccion_oei, seccion_aei, seccion_ruta_estrategica, seccion_anexo_b1, seccion_anexo_b2, seccion_anexo_b3
+from modules.inputs import seccion_situacion_futura_deseada, seccion_mision, seccion_oei, seccion_aei, seccion_ruta_estrategica, seccion_anexo_b1, seccion_anexo_b2, seccion_anexo_b3
 from modules.word_generator import generar_pei_word
 from modules.db import guardar_pei_en_bd, cargar_pei_desde_bd
 
 # ✅ Verificar que DATABASE_URL existe en los secretos (sin mostrar la clave)
-if "SUPABASE_URL" in st.secrets:
-    st.success("🔒 Se detectó correctamente la clave DATABASE_URL en los secretos de Streamlit.")
-else:
-    st.error("❌ No se encontró DATABASE_URL en los secretos. Verifica en Edit secrets.")
+#if "SUPABASE_URL" in st.secrets:
+#    st.success("🔒 Se detectó correctamente la clave DATABASE_URL en los secretos de Streamlit.")
+#else:
+#    st.error("❌ No se encontró DATABASE_URL en los secretos. Verifica en Edit secrets.")
+# Verificación silenciosa de secretos (no se muestra al usuario)
+if "SUPABASE_URL" not in st.secrets:
+    pass  # Puedes registrar un log o manejar un error interno si deseas
 st.set_page_config(page_title="Generador PEI Municipal", layout="wide")
-st.title("📘 Generador del Plan Estratégico Institucional (PEI)")
+st.title("📘 Generador del Plan Estratégico Institucional (PEI) de los gobiernos locales")
 st.write("Aplicación para municipalidades provinciales y distritales del Perú.")
+st.write("Esta herramienta considera lo establecido en la **Guía para el Planeamiento Institucional**, actualizada por Resolución de Presidencia de Consejo Directivo N°0055-2024-CEPLAN/PCD.")
 
 # =====================================
 # 🏛️ Información inicial desde pliegos.xlsx
@@ -53,6 +57,7 @@ if opcion_seleccionada:
     #st.markdown("### 🏛️ Información del Pliego Seleccionado")
     st.markdown(f"""
     **Nombre de la Municipalidad:** {datos['Nombre_Municipalidad']}  
+    **Código del pliego:** {datos['Codigo_Pliego']}  
     **Tipo:** {datos['Tipo']}  
     **Departamento:** {datos['Departamento']}  
     **Provincia:** {datos['Provincia']}  
@@ -61,6 +66,7 @@ if opcion_seleccionada:
 
     tipo = datos["Tipo"]
     nombre = datos["Nombre_Municipalidad"]
+    codigo = datos["Codigo_Pliego"]
 else:
     st.info("Por favor, selecciona un pliego para continuar.")
 
@@ -79,8 +85,8 @@ if "codigo_ingresado" in locals() and codigo_ingresado:
                 st.session_state["pei_registro"] = registro
 
                 # Rellenar campos visibles
-                st.session_state["mision_texto"] = registro["mision"]
-
+                st.session_state["mision"] = registro["mision"]
+                st.session_state["situacion_futura_deseada"] = registro["situacion_futura_deseada"]
                 st.session_state["oei_json"] = pd.DataFrame(registro["oei_json"]) if registro["oei_json"] else pd.DataFrame()
                 st.session_state["aei_json"] = pd.DataFrame(registro["aei_json"]) if registro["aei_json"] else pd.DataFrame()
                 st.session_state["ruta_json"] = pd.DataFrame(registro["ruta_json"]) if registro["ruta_json"] else pd.DataFrame()
@@ -96,23 +102,27 @@ else:
     st.warning("⚠️ Selecciona primero una municipalidad para poder cargar su avance.")
 
 st.markdown("---")
-st.markdown("## Completa las secciones del PEI")
+st.markdown("## Completa la estructura PEI para gobiernos locales")
 
 # =====================================
 # Secciones del PEI
 # =====================================
-st.header("1️⃣ Misión")
+
+st.header("1️⃣ Situación futura deseada")
+situacion_futura_deseada = seccion_situacion_futura_deseada()
+
+st.header("2️⃣ Misión") 
 mision = seccion_mision()
 
-st.header("2️⃣ Objetivos Estratégicos Institucionales (OEI)")
+st.header("3️⃣ Objetivos Estratégicos Institucionales (OEI)")
 #oei_df = seccion_oei()
 oei_seleccionados = seccion_oei()
 
-st.header("3️⃣ Acciones Estratégicas Institucionales (AEI)")
+st.header("4️⃣ Acciones Estratégicas Institucionales (AEI)")
 #aei_df = seccion_aei(oei_df)
 aei_seleccionadas = seccion_aei(oei_seleccionados)
 
-st.header("4️⃣ Ruta Estratégica: Vinculación con la PGG")
+st.header("5️⃣ Ruta Estratégica: Vinculación con la PGG")
 # Ruta al archivo Excel de vinculación
 RUTA_VINCULACION_PGG = "data/vinculacion_pgg.xlsx"
 
@@ -124,15 +134,15 @@ ruta_estrategica_df = seccion_ruta_estrategica(
     RUTA_VINCULACION_PGG
 )
 
-st.header(" Anexos B-1")
+st.header(" Anexos B-1: Matriz de articulación de planes")
 anexos = seccion_anexo_b1()
 
-st.header(" Anexo B-2: Vinculación con Políticas Nacionales")
+st.header(" Anexo B-2: Matriz de articulación de las Políticas Nacionales y el PEI")
 
 RUTA_ANEXO_B2 = "data/anexo_b2_politicas.xlsx"
 anexo_b2_df = seccion_anexo_b2(aei_seleccionadas, RUTA_ANEXO_B2)
 
-st.header(" Anexos B-3")
+st.header(" Anexos B-3: Matriz del Plan Estratégico Institucional")
 anexos = seccion_anexo_b3()
 
 # ============================================================
@@ -143,6 +153,7 @@ if "codigo_ingresado" in locals() and codigo_ingresado:
         try:
             data = {
                 "codigo_pliego": str(codigo_ingresado).strip(),
+                "situacion_futura_deseada": situacion_futura_deseada,
                 "mision": mision,
                 "oei_json": oei_seleccionados.to_dict(orient="records") if not oei_seleccionados.empty else [],
                 "aei_json": aei_seleccionadas.to_dict(orient="records") if not aei_seleccionadas.empty else [],
@@ -163,7 +174,9 @@ if st.button("📝 Generar documento Word"):
         #archivo_bytes = generar_pei_word(nombre, tipo, mision, oei_seleccionados, aei_seleccionadas, ruta, anexos)
         word_bytes = generar_pei_word(
             nombre_muni=nombre,
+            codigo=codigo,
             tipo=tipo,
+            situacion_futura_deseada=situacion_futura_deseada,
             mision=mision,
             oei_df=oei_seleccionados,
             aei_df=aei_seleccionadas,

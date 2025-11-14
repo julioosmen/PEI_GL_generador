@@ -32,13 +32,13 @@ def _add_table_from_df(doc, df, title=None):
             cells[i].text = str(val) if not pd.isna(val) else ''
 
 # --- Función principal ---
-def generar_pei_word(nombre_muni, tipo, mision, oei_df, aei_df, ruta_df, anexo_b2_df, anexos=None):
+def generar_pei_word(nombre_muni, codigo, tipo, mision, oei_df, aei_df, ruta_df, anexo_b2_df, anexos=None):
     """
     Genera un documento Word con la información seleccionada:
     OEI, AEI, Ruta Estratégica (PGG) y Anexo B-2 (Políticas Nacionales).
     """
     doc = Document()
-    doc.add_heading(f"Plan Estratégico Institucional - {nombre_muni}", level=0)
+    doc.add_heading(f"Plan Estratégico Institucional - {codigo} {nombre_muni}", level=0)
     doc.add_paragraph(f"Tipo de municipalidad: {tipo}")
 
     # --- Misión ---
