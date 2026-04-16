@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from io import StringIO
+from pathlib import Path
 
 def seccion_situacion_futura_deseada():
 
@@ -80,52 +81,159 @@ def _editar_tabla_interna(default_columns, default_rows=3, key=None):
 # =====================================================
 # 🎯 OEI (Objetivos Estratégicos Institucionales)
 # =====================================================
-def seccion_oei():
-    #st.markdown("### 🎯 Objetivos Estratégicos Institucionales (OEI)")
+@st.cache_data
+def cargar_oei_excel(path_excel="Extraer_por_elemento_MEGL.xlsx", hoja="OEI"):
+    """
+    Carga la hoja OEI desde el archivo Excel.
+    Se espera que la hoja tenga, como mínimo, estas columnas:
+    - Código
+    - Enunciado
+    - Nombre del indicador
+    """
+    try:
+        path_excel = Path(path_excel)
+        df = pd.read_excel(path_excel, sheet_name=hoja, engine="openpyxl")
 
-    oei_data = pd.DataFrame([
-        {"Código": "OEI.01", "Denominación": "Promover el ordenamiento territorial en beneficio de población local", "Nombre del Indicador": "Porcentaje de la población local que reside en zonas que cumplen con los instrumentos técnicos sustentatorios para el ordenamiento territorial"},
-        {"Código": "OEI.02", "Denominación": "Fortalecer el acceso a la atención primaria de salud preventiva de la población local", "Nombre del Indicador": "Porcentaje de personas satisfechas con las campañas y actividades de promoción de salud realizadas por la municipalidad"},
-        {"Código": "OEI.03", "Denominación": "Promover el acceso a servicios educativos, deportivos y recreacionales con enfoque intercultural e inclusivo para la población local", "Nombre del Indicador": "Porcentaje de participantes satisfechos con los programas educativos organizados por la municipalidad"},
-        {"Código": "OEI.04", "Denominación": "Promover condiciones ambientales saludables y sostenibles para la población local", "Nombre del Indicador": "Ind.1 Porcentaje de ciudadanos satisfechos con el servicio de recojo de residuos sólidos / Ind.2 Porcentaje de zonas de la localidad donde se han reducido puntos críticos de contaminación"},
-        {"Código": "OEI.05", "Denominación": "Reducir la exposición al riesgo de desastres de origen natural o antrópico de la población local", "Nombre del Indicador": "Porcentaje de zonas de la localidad con factores de riesgo de desastres eliminados o minimizados"},
-        {"Código": "OEI.06", "Denominación": "Mejorar el acceso a servicios de protección social y defensa de derechos de la población en situación de vulnerabilidad de la localidad", "Nombre del Indicador": "Porcentaje de la población en situación de vulnerabilidad atendida por programas sociales municipales"},
-        {"Código": "OEI.07", "Denominación": "Fortalecer la prevención y disuasión del delito y violencia en beneficio de la población local", "Nombre del Indicador": "Porcentaje de zonas con alta incidencia delictiva con servicio de patrullaje integrado"},
-        {"Código": "OEI.08", "Denominación": "Garantizar la provisión de los servicios de agua potable y saneamiento en beneficio de la población local", "Nombre del Indicador": "Porcentaje de viviendas con servicio de agua potable y alcantarillado"},
-        {"Código": "OEI.09", "Denominación": "Impulsar el crecimiento de la actividad empresarial, de emprendimientos y MYPES en la localidad", "Nombre del Indicador": "Porcentaje de micro y pequeñas empresas que operan con licencias municipales adecuadas"},
-        {"Código": "OEI.10", "Denominación": "Mejorar el sistema de transporte y transitabilidad en beneficio de la población local", "Nombre del Indicador": "Porcentaje de puntos críticos de tránsito en vías locales atendidos y mitigados"},
-        {"Código": "OEI.11", "Denominación": "Modernizar la Gestión Institucional", "Nombre del Indicador": "Porcentaje de ciudadanos satisfechos con la gestión institucional de la municipalidad"}
-    ])
+        # Normalizar nombres de columnas por si vienen con espacios
+        df.columns = [str(c).strip() for c in df.columns]
 
-    # Leer selecciones anteriores si existen
-    oei_previas = st.session_state.get("oei_json", pd.DataFrame())
+        columnas_requeridas = ["Código", "Enunciado", "Nombre del indicador"]
+        faltantes = [c for c in columnas_requeridas if c not in df.columns]
 
-    opciones = oei_data.apply(
-        lambda r: f"{r['Código']} - {r['Denominación']} - {r['Nombre del Indicador']}", axis=1
-    ).tolist()
+        if faltantes:
+            st.error(
+                f"La hoja '{hoja}' no contiene las columnas requeridas: {', '.join(faltantes)}"
+            )
+            return pd.DataFrame(columns=columnas_requeridas)
 
-    seleccionadas_previas = []
-    if not oei_previas.empty:
-        seleccionadas_previas = [
-            f"{r['Código']} - {r['Denominación']} - {r['Nombre del Indicador']}"
-            for _, r in oei_previas.iterrows()
-        ]
+        # Limpiar filas vacías
+        df = df[columnas_requeridas].copy()
+        df = df.dropna(subset=["Código", "Enunciado"])
+        df["Código"] = df["Código"].astype(str).str.strip()
+        df["Enunciado"] = df["Enunciado"].astype(str).str.strip()
+        df["Nombre del indicador"] = df["Nombre del indicador"].fillna("").astype(str).str.strip()
 
-    seleccionados = st.multiselect(
-        "Selecciona uno o más OEI:",
-        options=opciones,
-        default=seleccionadas_previas
+        # Eliminar duplicados exactos
+        df = df.drop_duplicates().reset_index(drop=True)
+
+        return df
+
+    except FileNotFoundError:
+        st.error(f"No se encontró el archivo Excel: {path_excel}")
+        return pd.DataFrame(columns=["Código", "Enunciado", "Nombre del indicador"])
+    except Exception as e:
+        st.error(f"No se pudo cargar la hoja '{hoja}' del archivo Excel: {e}")
+        return pd.DataFrame(columns=["Código", "Enunciado", "Nombre del indicador"])
+
+
+def seccion_oei(path_excel="Extraer_por_elemento_MEGL.xlsx"):
+    # st.markdown("### Objetivos Estratégicos Institucionales (OEI)")
+
+    oei_data = cargar_oei_excel(path_excel=path_excel, hoja="OEI")
+
+    if oei_data.empty:
+        return pd.DataFrame(columns=["Código", "Enunciado", "Nombre del indicador"])
+
+    # Base única de OEI para el primer selector
+    oei_base = (
+        oei_data[["Código", "Enunciado"]]
+        .drop_duplicates()
+        .sort_values(by="Código")
+        .reset_index(drop=True)
     )
 
-    if seleccionados:
-        codigos = [s.split(' - ')[0] for s in seleccionados]
-        df_sel = oei_data[oei_data["Código"].isin(codigos)][
-            ["Código", "Denominación", "Nombre del Indicador"]
-        ]
-        st.dataframe(df_sel.reset_index(drop=True), hide_index=True, use_container_width=True)
-        return df_sel
-    else:
-        return pd.DataFrame(columns=["Código", "Denominación", "Nombre del Indicador"])
+    oei_dict = {
+        row["Código"]: f"{row['Código']} - {row['Enunciado']}"
+        for _, row in oei_base.iterrows()
+    }
+
+    # Recuperar selección previa
+    oei_previas = st.session_state.get("oei_json", pd.DataFrame())
+    codigos_previos = []
+
+    if isinstance(oei_previas, pd.DataFrame) and not oei_previas.empty and "Código" in oei_previas.columns:
+        codigos_previos = (
+            oei_previas["Código"]
+            .dropna()
+            .astype(str)
+            .str.strip()
+            .drop_duplicates()
+            .tolist()
+        )
+        codigos_previos = [c for c in codigos_previos if c in oei_dict]
+
+    # Paso 1: seleccionar uno o más OEI
+    codigos_seleccionados = st.multiselect(
+        "Selecciona uno o más OEI:",
+        options=list(oei_dict.keys()),
+        default=codigos_previos,
+        format_func=lambda x: oei_dict[x]
+    )
+
+    if not codigos_seleccionados:
+        return pd.DataFrame(columns=["Código", "Enunciado", "Nombre del indicador"])
+
+    # Paso 2: para cada OEI, elegir el indicador si hay más de uno
+    filas_resultado = []
+
+    for codigo in codigos_seleccionados:
+        subset = oei_data[oei_data["Código"] == codigo].copy()
+        enunciado = subset["Enunciado"].iloc[0]
+
+        indicadores = (
+            subset["Nombre del indicador"]
+            .dropna()
+            .astype(str)
+            .str.strip()
+            .replace("", pd.NA)
+            .dropna()
+            .drop_duplicates()
+            .tolist()
+        )
+
+        # Buscar selección previa del indicador
+        indicador_previo = None
+        if isinstance(oei_previas, pd.DataFrame) and not oei_previas.empty:
+            prev = oei_previas[oei_previas["Código"].astype(str).str.strip() == codigo]
+            if not prev.empty and "Nombre del indicador" in prev.columns:
+                candidato = str(prev["Nombre del indicador"].iloc[0]).strip()
+                if candidato in indicadores:
+                    indicador_previo = candidato
+
+        st.markdown(f"**{codigo} - {enunciado}**")
+
+        if len(indicadores) > 1:
+            indicador_elegido = st.selectbox(
+                f"Selecciona el indicador para {codigo}:",
+                options=indicadores,
+                index=indicadores.index(indicador_previo) if indicador_previo in indicadores else 0,
+                key=f"indicador_{codigo}"
+            )
+        elif len(indicadores) == 1:
+            indicador_elegido = indicadores[0]
+            st.caption(f"Indicador seleccionado automáticamente: {indicador_elegido}")
+        else:
+            indicador_elegido = ""
+            st.warning(f"El OEI {codigo} no tiene indicador registrado en el Excel.")
+
+        filas_resultado.append({
+            "Código": codigo,
+            "Enunciado": enunciado,
+            "Nombre del indicador": indicador_elegido
+        })
+
+    df_sel = pd.DataFrame(filas_resultado)
+
+    st.dataframe(
+        df_sel.reset_index(drop=True),
+        hide_index=True,
+        use_container_width=True
+    )
+
+    # Guardar selección en session_state
+    st.session_state["oei_json"] = df_sel
+
+    return df_sel
 
 # =====================================================
 # 🧩 AEI (Acciones Estratégicas Institucionales)
