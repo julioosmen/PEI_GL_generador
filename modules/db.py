@@ -28,7 +28,7 @@ def guardar_pei_en_bd(data: dict):
 
     payload = {
         "codigo_pliego": codigo,
-        "mision": data.get("mision", ""),
+        "mision_texto": data.get("mision_texto", ""),
         "oei_json": json.dumps(data.get("oei_json", [])),
         "aei_json": json.dumps(data.get("aei_json", [])),
         "ruta_json": json.dumps(data.get("ruta_json", [])),
@@ -57,7 +57,7 @@ def cargar_pei_desde_bd(codigo_pliego: str):
 
     registro = res.data[0]
     # Convertir JSON strings a estructuras Python
-    for campo in ["oei_json", "aei_json", "ruta_json", "anexo_b2_json", "anexos_json"]:
+    for campo in ["mision_texto", "oei_json", "aei_json", "ruta_json", "anexo_b2_json", "anexos_json"]:
         if isinstance(registro.get(campo), str):
             try:
                 registro[campo] = json.loads(registro[campo])

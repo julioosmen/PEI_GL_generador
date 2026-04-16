@@ -86,8 +86,9 @@ if "codigo_ingresado" in locals() and codigo_ingresado:
                 st.session_state["pei_registro"] = registro
 
                 # Rellenar campos visibles
-                st.session_state["mision"] = registro["mision"]
-                st.session_state["situacion_futura_deseada"] = registro["situacion_futura_deseada"]
+                st.session_state["mision_texto"] = registro.get("mision_texto", "")
+                #st.session_state["mision"] = registro.get("mision", registro.get("mision_texto", ""))
+                #st.session_state["situacion_futura_deseada"] = registro["situacion_futura_deseada"]
                 st.session_state["oei_json"] = pd.DataFrame(registro["oei_json"]) if registro["oei_json"] else pd.DataFrame()
                 st.session_state["aei_json"] = pd.DataFrame(registro["aei_json"]) if registro["aei_json"] else pd.DataFrame()
                 st.session_state["ruta_json"] = pd.DataFrame(registro["ruta_json"]) if registro["ruta_json"] else pd.DataFrame()
@@ -113,7 +114,7 @@ st.header("1️⃣ Situación futura deseada")
 situacion_futura_deseada = seccion_situacion_futura_deseada()
 
 st.header("2️⃣ Misión") 
-mision = seccion_mision()
+mision_texto = seccion_mision()
 
 st.header("3️⃣ Objetivos Estratégicos Institucionales (OEI)")
 #oei_df = seccion_oei()
@@ -155,7 +156,7 @@ if "codigo_ingresado" in locals() and codigo_ingresado:
             data = {
                 "codigo_pliego": str(codigo_ingresado).strip(),
                 "situacion_futura_deseada": situacion_futura_deseada,
-                "mision": mision,
+                "mision": mision_texto,
                 "oei_json": oei_seleccionados.to_dict(orient="records") if not oei_seleccionados.empty else [],
                 "aei_json": aei_seleccionadas.to_dict(orient="records") if not aei_seleccionadas.empty else [],
                 "ruta_json": ruta_estrategica_df.to_dict(orient="records") if not ruta_estrategica_df.empty else [],
@@ -172,13 +173,13 @@ else:
 
 if st.button("📝 Generar documento Word"):
     with st.spinner("Generando PEI..."):
-        #archivo_bytes = generar_pei_word(nombre, tipo, mision, oei_seleccionados, aei_seleccionadas, ruta, anexos)
+        #archivo_bytes = generar_pei_word(nombre, tipo, mision_texto, oei_seleccionados, aei_seleccionadas, ruta, anexos)
         word_bytes = generar_pei_word(
             nombre_muni=nombre,
             codigo=codigo,
             tipo=tipo,
-            situacion_futura_deseada=situacion_futura_deseada,
-            mision=mision,
+            #situacion_futura_deseada=situacion_futura_deseada,
+            mision_texto=mision_texto,
             oei_df=oei_seleccionados,
             aei_df=aei_seleccionadas,
             ruta_df=ruta_estrategica_df,
