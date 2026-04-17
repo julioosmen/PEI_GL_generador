@@ -82,7 +82,7 @@ def _editar_tabla_interna(default_columns, default_rows=3, key=None):
 # 🎯 OEI (Objetivos Estratégicos Institucionales)
 # =====================================================
 @st.cache_data
-def cargar_oei_excel(path_excel='data/Extraer_por_elemento_MEGL.xlsx', hoja="OEI"):
+def cargar_oei_excel(path_excel='data/Extraer_por_elemento_MEGL.xlsx', hoja='OEI'):
     """
     Carga la hoja OEI desde el archivo Excel.
     Se espera que la hoja tenga, como mínimo, estas columnas:
