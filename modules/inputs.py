@@ -125,8 +125,7 @@ def cargar_oei_excel(path_excel='data/Extraer_por_elemento_MEGL.xlsx', hoja='OEI
         st.error(f"No se pudo cargar la hoja '{hoja}' del archivo Excel: {e}")
         return pd.DataFrame(columns=["Código", "Enunciado", "Nombre del indicador"])
 
-
-def seccion_oei(path_excel="Extraer_por_elemento_MEGL.xlsx"):
+def seccion_oei(path_excel="data/Extraer_por_elemento_MEGL.xlsx"):
     # st.markdown("### Objetivos Estratégicos Institucionales (OEI)")
 
     oei_data = cargar_oei_excel(path_excel=path_excel, hoja="OEI")
